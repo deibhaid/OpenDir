@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenDir — File URL Access</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.5;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+      .card {
+        max-width: 560px;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: white;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+      h1 { margin-top: 0; }
+      ol { padding-left: 1.25rem; }
+      button {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: #2563eb;
+        color: white;
+        font: inherit;
+        cursor: pointer;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #0f172a; color: #e2e8f0; }
+        .card { background: #111827; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Enable file URL access for OpenDir</h1>
+      <p>
+        OpenDir can enhance local folder browsing, but Chrome blocks extensions from reading
+        <code>file://</code> pages unless you explicitly allow it.
+      </p>
+      <ol>
+        <li>Open <strong>chrome://extensions</strong></li>
+        <li>Find <strong>OpenDir</strong> in your extension list</li>
+        <li>Enable <strong>Allow access to file URLs</strong></li>
+        <li>Return to your local folder tab and click the OpenDir toolbar icon</li>
+      </ol>
+      <button id="open-extensions" type="button">Open extension settings</button>
+    </main>
+    <script type="module" src="./file-access-help.js"></script>
+  </body>
+</html>
