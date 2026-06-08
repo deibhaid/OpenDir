@@ -118,11 +118,11 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
         />
       </td>
       <td className="px-4 py-3">
-        <div className="flex items-start gap-2.5">
-          <FileTypeIcon item={item} className="mt-0.5 shrink-0" />
+        <div className="flex min-w-0 items-center gap-2.5">
+          <FileTypeIcon item={item} />
           <a
             href={item.href}
-            className="break-words text-foreground hover:underline"
+            className="truncate text-foreground hover:underline"
             title={displayName}
           >
             {displayName}

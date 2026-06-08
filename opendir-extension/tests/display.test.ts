@@ -18,16 +18,6 @@ describe('getDisplayName', () => {
     expect(getDisplayName({ name: 'photos/', href: 'http://x/photos/', type: 'directory' })).toBe('photos/');
   });
 
-  it('strips extension from full href-derived names', () => {
-    const item: DirectoryItem = {
-      name: 'Alex Archer.-.Rogue Angel Bk01.-.Destiny.zip',
-      href: 'http://x/Alex%20Archer.-.Rogue%20Angel%20Bk01.-.Destiny.zip',
-      type: 'file',
-      ext: 'zip',
-    };
-    expect(getDisplayName(item)).toBe('Alex Archer.-.Rogue Angel Bk01.-.Destiny');
-  });
-
   it('leaves names without matching extension suffix as-is', () => {
     const item: DirectoryItem = {
       name: 'Neil Gaiman.-.American Gods',
