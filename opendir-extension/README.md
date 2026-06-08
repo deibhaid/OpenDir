@@ -43,6 +43,13 @@ The build output is written to `dist/`.
 - `SPEC.md` — product specification
 - `NOTICE.md` — legal / upstream disclaimer
 - `QA.md` — acceptance checklist
+- `CHANGELOG.md` — version history
+
+## Releases
+
+Stable releases are tagged `v1.0.0`, etc. See [GitHub Releases](https://github.com/deibhaid/deibhaid/releases) for packaged `dist/` zips.
+
+Current version: **1.0.0**
 
 ## Development
 
