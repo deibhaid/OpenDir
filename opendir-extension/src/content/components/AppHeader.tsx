@@ -33,23 +33,32 @@ export function AppHeader() {
 
       <div
         className={cn(
-          'flex h-10 flex-nowrap items-center gap-2',
-          hasSelection && 'rounded-lg bg-muted/30 px-2',
+          'grid h-10 grid-cols-[auto_minmax(10rem,1fr)_auto] items-center gap-2',
+          hasSelection && 'rounded-lg bg-muted/30',
         )}
       >
-        {hasSelection && (
-          <div className="flex shrink-0 items-center gap-3 pr-2 text-sm">
-            <span className="whitespace-nowrap tabular-nums">{selectionCount} selected</span>
-            <Button size="sm" onClick={downloadSelected}>
-              Download selected
-            </Button>
-            <Button size="sm" variant="ghost" onClick={clearSelection}>
-              Clear
-            </Button>
-          </div>
-        )}
+        <div
+          className={cn(
+            'flex items-center gap-3 overflow-hidden text-sm',
+            hasSelection ? 'w-auto opacity-100' : 'pointer-events-none w-0 opacity-0',
+          )}
+          aria-hidden={!hasSelection}
+        >
+          <span className="whitespace-nowrap tabular-nums">{selectionCount} selected</span>
+          <Button size="sm" onClick={downloadSelected} tabIndex={hasSelection ? 0 : -1}>
+            Download selected
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={clearSelection}
+            tabIndex={hasSelection ? 0 : -1}
+          >
+            Clear
+          </Button>
+        </div>
 
-        <div className="relative min-w-[10rem] flex-1 basis-0">
+        <div className="relative min-w-0">
           <div className="flex h-10 items-stretch overflow-hidden rounded-lg border border-border/80 bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/30">
             <input
               type="search"
