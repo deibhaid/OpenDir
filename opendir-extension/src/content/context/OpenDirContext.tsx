@@ -4,9 +4,11 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { downloadSelected as runBatchDownload } from '../download/batchDownload';
+import { getRangeHrefs } from '../lib/selection';
 import {
   ALL_EXTENSIONS_FILTER,
   type DirectoryItem,
@@ -43,6 +45,7 @@ interface OpenDirContextValue {
   sortDir: SortDir;
   toggleSort: (column: SortColumn) => void;
   selectedHrefs: Set<string>;
+  selectItem: (href: string, options?: { shiftKey?: boolean }) => void;
   toggleItemSelect: (href: string) => void;
   toggleSelected: (href: string) => void;
   selectAllVisible: () => void;
@@ -87,6 +90,7 @@ export function OpenDirProvider({
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [selectedHrefs, setSelectedHrefs] = useState<Set<string>>(new Set());
+  const selectionAnchorRef = useRef<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<DirectoryItem | null>(null);
   const [downloadDelayMs, setDownloadDelayMsState] = useState(1500);
   const [downloadRandom, setDownloadRandomState] = useState(true);
@@ -184,12 +188,39 @@ export function OpenDirProvider({
     });
   }, []);
 
+  const selectItem = useCallback(
+    (href: string, options?: { shiftKey?: boolean }) => {
+      if (options?.shiftKey && selectionAnchorRef.current) {
+        const rangeHrefs = getRangeHrefs(
+          filteredSortedItems,
+          selectionAnchorRef.current,
+          href,
+        );
+        if (rangeHrefs.length > 0) {
+          setSelectedHrefs((prev) => {
+            const next = new Set(prev);
+            for (const rangeHref of rangeHrefs) {
+              next.add(rangeHref);
+            }
+            return next;
+          });
+          return;
+        }
+      }
+
+      toggleItemSelect(href);
+      selectionAnchorRef.current = href;
+    },
+    [filteredSortedItems, toggleItemSelect],
+  );
+
   const selectAllVisible = useCallback(() => {
     setSelectedHrefs(new Set(visibleItems.map((item) => item.href)));
   }, [visibleItems]);
 
   const clearSelection = useCallback(() => {
     setSelectedHrefs(new Set());
+    selectionAnchorRef.current = null;
   }, []);
 
   const toggleSelectAllVisible = useCallback(() => {
@@ -231,6 +262,7 @@ export function OpenDirProvider({
     sortDir,
     toggleSort,
     selectedHrefs,
+    selectItem,
     toggleItemSelect,
     toggleSelected: toggleItemSelect,
     selectAllVisible,

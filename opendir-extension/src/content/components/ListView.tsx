@@ -97,7 +97,7 @@ export function ListViewHeader() {
 }
 
 function ListRow({ item }: { item: import('../types').DirectoryItem }) {
-  const { selectedHrefs, toggleSelected } = useOpenDir();
+  const { selectedHrefs, selectItem } = useOpenDir();
   const selected = selectedHrefs.has(item.href);
   const displayName = getDisplayName(item);
 
@@ -112,7 +112,11 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
         <input
           type="checkbox"
           checked={selected}
-          onChange={() => toggleSelected(item.href)}
+          onClick={(event) => {
+            event.preventDefault();
+            selectItem(item.href, { shiftKey: event.shiftKey });
+          }}
+          onChange={() => {}}
           aria-label={`Select ${displayName}`}
           className="h-4 w-4 rounded border-border"
         />
