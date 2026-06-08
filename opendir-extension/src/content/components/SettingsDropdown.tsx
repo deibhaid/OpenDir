@@ -1,6 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Check, Settings2 } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
+import { getAppPortalContainer } from '../lib/portal';
 import type { ThemeMode } from '../types';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
@@ -30,11 +31,11 @@ export function SettingsDropdown() {
           <Settings2 className="h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
+      <DropdownMenu.Portal container={getAppPortalContainer()}>
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="z-50 min-w-0 rounded-lg border border-border bg-popover p-1 shadow-lg"
+          className="z-[100] w-max min-w-[24rem] rounded-lg border border-border bg-popover p-1 shadow-lg"
         >
           <div className="flex flex-row items-start gap-0 p-1">
             {/* Column 1 — Theme */}

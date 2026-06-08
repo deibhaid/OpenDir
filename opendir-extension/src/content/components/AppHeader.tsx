@@ -4,6 +4,7 @@ import { Filter, LayoutGrid, LayoutList, X } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { SettingsDropdown } from './SettingsDropdown';
 import { useOpenDir } from '../context/OpenDirContext';
+import { getAppPortalContainer } from '../lib/portal';
 import type { FilterType } from '../types';
 import { Button } from './ui/Button';
 
@@ -26,10 +27,12 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex flex-col gap-4 border-b border-border/70 bg-background/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
       <div className="flex items-center gap-3">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 overflow-hidden">
           <Breadcrumb />
         </div>
-        <SettingsDropdown />
+        <div className="relative z-20 shrink-0">
+          <SettingsDropdown />
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
@@ -66,10 +69,10 @@ export function AppHeader() {
               <Filter className="h-4 w-4" />
             </Button>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
+          <DropdownMenu.Portal container={getAppPortalContainer()}>
             <DropdownMenu.Content
               align="end"
-              className="z-50 min-w-[180px] rounded-md border border-border bg-popover p-1 shadow-md"
+              className="z-[100] min-w-[180px] rounded-md border border-border bg-popover p-1 shadow-md"
             >
               <DropdownMenu.Label className="px-2 py-1.5 text-sm font-medium">
                 Filter by Type
