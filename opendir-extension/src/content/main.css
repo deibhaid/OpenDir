@@ -67,7 +67,7 @@ body {
 }
 
 input[type='checkbox'] {
-  accent-color: hsl(var(--foreground));
+  accent-color: hsl(var(--primary));
 }
 
 #root select {

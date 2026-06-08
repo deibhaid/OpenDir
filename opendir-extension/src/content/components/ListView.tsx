@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { FileTypeIcon } from './FileTypeIcon';
 import { useOpenDir } from '../context/OpenDirContext';
 import { getDisplayName } from '../lib/display';
@@ -100,6 +101,7 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
   const { selectedHrefs, selectItem } = useOpenDir();
   const selected = selectedHrefs.has(item.href);
   const displayName = getDisplayName(item);
+  const shiftClickRef = useRef(false);
 
   return (
     <tr
@@ -112,13 +114,14 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
         <input
           type="checkbox"
           checked={selected}
-          onClick={(event) => {
-            event.preventDefault();
-            selectItem(item.href, { shiftKey: event.shiftKey });
+          onMouseDown={(event) => {
+            shiftClickRef.current = event.shiftKey;
           }}
-          onChange={() => {}}
+          onChange={() => {
+            selectItem(item.href, { shiftKey: shiftClickRef.current });
+          }}
           aria-label={`Select ${displayName}`}
-          className="h-4 w-4 rounded border-border"
+          className="h-4 w-4 cursor-pointer rounded border-border"
         />
       </td>
       <td className="px-4 py-3">
