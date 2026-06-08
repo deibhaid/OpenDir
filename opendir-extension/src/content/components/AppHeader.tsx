@@ -33,13 +33,13 @@ export function AppHeader() {
 
       <div
         className={cn(
-          'flex items-center gap-2',
+          'flex flex-nowrap items-center gap-2',
           hasSelection && 'rounded-lg bg-muted/30 px-2 py-1.5',
         )}
       >
         {hasSelection && (
-          <div className="flex shrink-0 items-center gap-3 pr-1 text-sm">
-            <span className="whitespace-nowrap">{selectionCount} selected</span>
+          <div className="flex shrink-0 items-center gap-3 pr-2 text-sm">
+            <span className="whitespace-nowrap tabular-nums">{selectionCount} selected</span>
             <Button size="sm" onClick={downloadSelected}>
               Download selected
             </Button>
@@ -49,7 +49,7 @@ export function AppHeader() {
           </div>
         )}
 
-        <div className="relative min-w-0 flex-1">
+        <div className="relative min-w-[10rem] flex-1 basis-0">
           <div className="flex h-10 items-stretch overflow-hidden rounded-lg border border-border/80 bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/30">
             <input
               type="search"
