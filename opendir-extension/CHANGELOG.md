@@ -2,6 +2,26 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.2] — 2026-06-08
+
+### Added
+
+- Extension filter dropdown at the end of the search field (`*.*` default, plus `*.ext` for each extension in the directory)
+
+### Changed
+
+- Removed filter-by-type button and category filter menu
+
+### Fixed
+
+- Settings gear button opens the dropdown panel (Radix ref forwarding, portal mount, z-index)
+
+### Verified
+
+- Build, typecheck, and 18 unit tests passing
+
+[0.0.2]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.2
+
 ## [0.0.1] — 2026-06-08
 
 Initial release. Clean-room Chrome MV3 extension by David W. Bryson.

@@ -1,4 +1,4 @@
-# OpenDir 0.0.1 — Initial Release
+# OpenDir 0.0.2
 
 **Author:** David W. Bryson  
 **Type:** Chrome Manifest V3 extension (unpacked load)
@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **OpenDir-0.0.1.zip** from this release (or build from source).
+1. Download **OpenDir-0.0.2.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -24,13 +24,29 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 
 ## Highlights
 
-- Auto-inject on directory index pages (HTTP/HTTPS)
-- List + grid views, search, filters, sortable columns
-- Settings: theme, thumbnail toggles, multi-file download delay
-- Batch download with staggered timing
-- Image/video/audio preview modal
+- Extension filter dropdown in search bar (`*.*`, `*.zip`, etc.)
+- Settings gear opens three-column panel (Theme | Thumbnails | Multi-file download)
 - Full filenames when servers truncate directory link text
-- Clean-room implementation — no upstream bundle code
+- List + grid views, search, sortable columns, batch downloads, preview modal
+
+## Versioning
+
+When drafting a new release, bump the version automatically:
+
+| Current | Next |
+|---------|------|
+| 0.0.1 | 0.0.2 |
+| 0.0.9 | 0.1.0 |
+| 0.9.9 | 1.0.0 |
+
+Each segment is single-digit (0–9). Increment patch; at patch 9 roll to minor; at minor 9 roll to major.
+
+```bash
+cd opendir-extension
+node scripts/bump-version.mjs
+npm run build
+node scripts/package-release.mjs
+```
 
 ## Storage keys
 
