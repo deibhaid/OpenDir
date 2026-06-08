@@ -22,13 +22,8 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-10 flex flex-col gap-4 border-b border-border/70 bg-background/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
-      <div className="flex items-center gap-3">
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <Breadcrumb />
-        </div>
-        <div className="relative z-20 shrink-0">
-          <SettingsDropdown />
-        </div>
+      <div className="min-w-0 overflow-hidden">
+        <Breadcrumb />
       </div>
 
       <div
@@ -85,7 +80,7 @@ export function AppHeader() {
           </div>
         </div>
 
-        <div className="flex h-10 shrink-0 items-center gap-1">
+        <div className="relative z-20 flex h-10 shrink-0 items-center gap-1">
           <Button
             variant={view === 'grid' ? 'toolbarActive' : 'toolbar'}
             size="icon"
@@ -106,6 +101,7 @@ export function AppHeader() {
           >
             <LayoutList className="h-4 w-4" />
           </Button>
+          <SettingsDropdown />
         </div>
       </div>
     </header>
