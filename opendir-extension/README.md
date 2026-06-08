@@ -4,6 +4,8 @@
 
 OpenDir is a personal Chrome Manifest V3 extension that replaces bare Apache/nginx directory index pages and enhances local `file://` folder browsing with search, filters, previews, and batch downloads.
 
+The extension appears as **OpenDir** in Chrome (`chrome://extensions`). Source lives in this repository under `opendir-extension/`.
+
 ## Build
 
 ```bash

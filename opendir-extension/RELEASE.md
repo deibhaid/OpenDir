@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **opendir-extension-v1.0.0.zip** from this release (or build from source).
+1. Download **OpenDir-1.0.0.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -20,7 +20,7 @@ npm install
 npm run build
 ```
 
-Load `opendir-extension/dist/` as unpacked.
+Load the `dist/` folder inside the unzipped package as unpacked.
 
 ## Highlights
 
