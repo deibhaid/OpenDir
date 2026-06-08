@@ -20,6 +20,8 @@
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
   --ring: 221.2 83.2% 53.3%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
   --radius: 0.5rem;
 }
 
@@ -41,6 +43,8 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   --ring: 224.3 76.3% 48%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
 }
 
 html, body, #root {
@@ -49,37 +53,6 @@ html, body, #root {
 }
 
 body {
-  @apply bg-background text-foreground;
+  @apply bg-background text-foreground text-sm;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-
-.opendir-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .opendir-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-@media (min-width: 768px) {
-  .opendir-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-
-@media (min-width: 1024px) {
-  .opendir-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-}
-
-@media (min-width: 1280px) {
-  .opendir-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-}
-
-.file-type-folder { color: #2563eb; }
-.file-type-image { color: #16a34a; }
-.file-type-video { color: #9333ea; }
-.file-type-audio { color: #ea580c; }
-.file-type-document { color: #0891b2; }
-.file-type-code { color: #ca8a04; }
-.file-type-archive { color: #64748b; }
-.file-type-default { color: #6b7280; }

@@ -81,8 +81,11 @@ export function compareItems(a: DirectoryItem, b: DirectoryItem, column: SortCol
     case 'ext':
       return (a.ext ?? '').localeCompare(b.ext ?? '', undefined, { sensitivity: 'base' }) * factor;
     case 'date': {
-      const aDate = parseDate(a.created ?? a.modified)?.getTime() ?? 0;
-      const bDate = parseDate(b.created ?? b.modified)?.getTime() ?? 0;
+      const aDate = parseDate(a.created ?? a.modified)?.getTime();
+      const bDate = parseDate(b.created ?? b.modified)?.getTime();
+      if (aDate == null && bDate == null) return 0;
+      if (aDate == null) return 1 * factor;
+      if (bDate == null) return -1 * factor;
       return (aDate - bDate) * factor;
     }
     case 'size':
@@ -134,8 +137,9 @@ export function getNextSortState(
 }
 
 export function getFooterText(totalFiltered: number, hasActiveFilter: boolean): string {
-  if (hasActiveFilter) return `Showing ${totalFiltered} items`;
-  return `Showing all ${totalFiltered} items`;
+  const noun = totalFiltered === 1 ? 'item' : 'items';
+  if (hasActiveFilter) return `Showing ${totalFiltered} ${noun}`;
+  return `Showing all ${totalFiltered} ${noun}`;
 }
 
 export { PAGE_SIZE };

@@ -1,5 +1,7 @@
 import { useOpenDir } from '../context/OpenDirContext';
 import { downloadSelectedFiles } from '../lib/files';
+import { Button } from './ui/Button';
+import { cn } from '../lib/utils';
 
 export function SelectionBar() {
   const {
@@ -11,30 +13,30 @@ export function SelectionBar() {
   } = useOpenDir();
 
   const count = selectedHrefs.size;
-  const visible = count > 0;
+  const hasSelection = count > 0;
 
   return (
-    <div className="h-12 shrink-0 border-b border-border/60 bg-muted/30">
-      {visible && (
-        <div className="flex h-full items-center gap-3 px-4">
-          <span className="text-sm font-medium">{count} selected</span>
-          <button
-            type="button"
-            className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
+    <div
+      className={cn(
+        'flex h-12 shrink-0 items-center gap-3 border-b px-4 py-2 text-sm',
+        hasSelection && 'bg-muted/30',
+      )}
+    >
+      {hasSelection && (
+        <>
+          <span>{count} selected</span>
+          <Button
+            size="sm"
             onClick={() => {
               void downloadSelectedFiles(filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom);
             }}
           >
             Download selected
-          </button>
-          <button
-            type="button"
-            className="rounded-md border border-input px-3 py-1.5 text-sm hover:bg-accent"
-            onClick={clearSelection}
-          >
+          </Button>
+          <Button size="sm" variant="ghost" onClick={clearSelection}>
             Clear
-          </button>
-        </div>
+          </Button>
+        </>
       )}
     </div>
   );

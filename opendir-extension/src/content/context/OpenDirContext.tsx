@@ -79,7 +79,7 @@ export function OpenDirProvider({
   const [selectedItem, setSelectedItem] = useState<DirectoryItem | null>(null);
   const [downloadDelayMs, setDownloadDelayMsState] = useState(1500);
   const [downloadRandom, setDownloadRandomState] = useState(true);
-  const [theme, setThemeState] = useState<ThemeMode>('system');
+  const [theme, setThemeState] = useState<ThemeMode>('light');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
