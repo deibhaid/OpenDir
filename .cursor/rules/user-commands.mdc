@@ -1,0 +1,25 @@
+---
+description: When giving the user steps to run locally, always provide complete copy-pasteable commands.
+alwaysApply: true
+---
+
+# User command instructions
+
+When the user needs to run something locally (git pull, build, reload extension, release prep, etc.):
+
+- **Always give the full command block** — every command, in order, ready to copy and paste.
+- Use absolute or `~/`-based paths matching their setup: `~/ws/scriptdir/scripts/general/OpenDir/opendir-extension`
+- Do not say "run npm run build" without the preceding `cd` and any required `git pull`.
+- Do not hand off partial steps or assume they know which directory to be in.
+- Include reload/reminder lines after build when relevant (Chrome extension reload).
+
+Example format:
+
+```bash
+cd ~/ws/scriptdir/scripts/general/OpenDir
+git pull origin cursor/fix-truncated-filenames-cd8c
+cd opendir-extension
+npm run build
+```
+
+Then: reload `opendir-extension/dist/` in Chrome at `chrome://extensions`.
