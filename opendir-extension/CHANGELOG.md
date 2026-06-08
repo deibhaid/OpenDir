@@ -2,6 +2,27 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.5] — 2026-06-08
+
+### Added
+
+- Shift-click range selection in list view (select a row, then shift-click another to check everything between)
+
+### Changed
+
+- Breadcrumb shows root URL with `/` separators and a trailing `/` on the current path
+- Settings gear moved to the toolbar row, to the right of the grid/list toggles
+
+### Fixed
+
+- Shift-selected rows now show checkbox checkmarks reliably
+
+### Verified
+
+- Build, typecheck, and 29 unit tests passing
+
+[0.0.5]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.5
+
 ## [0.0.4] — 2026-06-08
 
 ### Changed
