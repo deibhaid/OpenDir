@@ -48,6 +48,19 @@ npm run build
 node scripts/package-release.mjs
 ```
 
+Then draft the release with GitHub CLI (required when an agent drafts a release):
+
+```bash
+gh release create v<version> \
+  --draft \
+  --title "OpenDir <version>" \
+  --target <branch-name> \
+  --notes-file opendir-extension/RELEASE.md \
+  ../release/OpenDir-<version>.zip
+```
+
+See `.cursor/rules/draft-release.mdc` for the full agent workflow.
+
 ## Storage keys
 
 | Setting | Key | Default |

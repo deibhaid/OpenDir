@@ -1,0 +1,57 @@
+---
+description: When the user asks to draft a release for OpenDir, use gh to create a draft GitHub release.
+alwaysApply: true
+---
+
+# Draft OpenDir release
+
+When the user says **draft a release** (or similar), do the full release workflow and **always publish the draft with GitHub CLI (`gh`)** — do not stop at local packaging or tell the user to create the release manually unless `gh` authentication fails after retry.
+
+## Version bump
+
+Read `opendir-extension/package.json`, then bump using the single-digit rule in `opendir-extension/scripts/version.mjs`:
+
+- Increment patch: `0.0.1` → `0.0.2`
+- Patch max 9 → next minor: `0.0.9` → `0.1.0`
+- Minor max 9 → next major: `0.9.9` → `1.0.0`
+
+Run:
+
+```bash
+cd opendir-extension
+node scripts/bump-version.mjs
+```
+
+Update `CHANGELOG.md` with the new version section before committing.
+
+## Build and package
+
+```bash
+cd opendir-extension
+npm test
+npm run build
+node scripts/package-release.mjs
+```
+
+This produces `release/OpenDir-<version>.zip`.
+
+## Draft with gh (required)
+
+Commit, push the working branch, then create a **draft** release:
+
+```bash
+gh release create v<version> \
+  --draft \
+  --title "OpenDir <version>" \
+  --target <branch-name> \
+  --notes-file opendir-extension/RELEASE.md \
+  release/OpenDir-<version>.zip
+```
+
+Use `--draft` unless the user explicitly asks to publish.
+
+If a prior draft for the same tag exists, delete or update it with `gh release delete` / `gh release edit` as appropriate.
+
+## On gh auth failure
+
+If `gh` returns 401, still commit and push all release changes, then tell the user `gh auth login` is required and provide the exact `gh release create` command to run locally.
