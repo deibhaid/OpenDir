@@ -33,8 +33,8 @@ export function AppHeader() {
 
       <div
         className={cn(
-          'flex flex-nowrap items-center gap-2',
-          hasSelection && 'rounded-lg bg-muted/30 px-2 py-1.5',
+          'flex h-10 flex-nowrap items-center gap-2',
+          hasSelection && 'rounded-lg bg-muted/30 px-2',
         )}
       >
         {hasSelection && (
@@ -76,13 +76,14 @@ export function AppHeader() {
           </div>
         </div>
 
-        <div className="flex shrink-0 gap-1">
+        <div className="flex h-10 shrink-0 items-center gap-1">
           <Button
             variant={view === 'grid' ? 'toolbarActive' : 'toolbar'}
             size="icon"
             title="Grid view"
             aria-label="Grid view"
             onClick={() => setView('grid')}
+            className="h-10 w-10"
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
@@ -92,6 +93,7 @@ export function AppHeader() {
             title="List view"
             aria-label="List view"
             onClick={() => setView('list')}
+            className="h-10 w-10"
           >
             <LayoutList className="h-4 w-4" />
           </Button>
