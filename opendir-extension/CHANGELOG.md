@@ -2,6 +2,19 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.6] — 2026-06-08
+
+### Fixed
+
+- OpenDir no longer auto-activates on GitHub, GitLab, or Bitbucket repository pages
+- Directory table detection requires file-listing columns (e.g. Last modified, Size) instead of any header containing "last"
+
+### Verified
+
+- Build, typecheck, and 35 unit tests passing
+
+[0.0.6]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.6
+
 ## [0.0.5] — 2026-06-08
 
 ### Added

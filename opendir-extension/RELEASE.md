@@ -1,4 +1,4 @@
-# OpenDir 0.0.5
+# OpenDir 0.0.6
 
 **Author:** David W. Bryson  
 **Type:** Chrome Manifest V3 extension (unpacked load)
@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **OpenDir-0.0.5.zip** from this release (or build from source).
+1. Download **OpenDir-0.0.6.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -24,13 +24,13 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 
 ## Highlights
 
+- Fixed false activation on GitHub/GitLab/Bitbucket repo pages
+- Stricter open-directory detection for table-based listings
+- Recursive subfolder search with infinity toggle
 - Shift-click range selection in list view
 - Breadcrumb shows root URL with `/` path separators
-- Settings on the toolbar row beside grid/list toggles
 - Extension filter in the search bar — compact field with centered `*.*` / `*.ext` label
 - Search, bulk-download actions, and view toggles on one stable toolbar row
-- OpenDir runs only on open HTTP(S) directory listings
-- Full filenames when servers truncate directory link text
 - List + grid views, sortable columns, batch downloads, preview modal
 
 ## Versioning
@@ -39,13 +39,9 @@ When drafting a new release, bump the version automatically:
 
 | Current | Next |
 |---------|------|
-| 0.0.1 | 0.0.2 |
+| 0.0.5 | 0.0.6 |
 | 0.0.9 | 0.1.0 |
 | 0.9.9 | 1.0.0 |
-
-Each segment is single-digit (0–9). Increment patch; at patch 9 roll to minor; at minor 9 roll to major.
-
-**Canonical version:** `opendir-extension/package.json`. `manifest.json` and `dist/manifest.json` are synced from it on every build so Chrome shows the same version as the GitHub release tag (`v0.0.5` → `"version": "0.0.5"`).
 
 ```bash
 cd opendir-extension
@@ -54,34 +50,18 @@ npm run build
 node scripts/package-release.mjs
 ```
 
-Then draft the release with GitHub CLI — the agent runs this; do not ask the user to do it:
+Then commit, push, and draft the GitHub release with `OpenDir-<version>.zip`.
 
-```bash
-gh release create v<version> \
-  --draft \
-  --title "OpenDir <version>" \
-  --target <branch-name> \
-  --notes-file opendir-extension/RELEASE.md \
-  ../release/OpenDir-<version>.zip
-```
+## What's in 0.0.6
 
-See `.cursor/rules/draft-release.mdc` for the full agent workflow (execute end-to-end; never hand off to the user).
+OpenDir was incorrectly treating GitHub repository file tables as open directory listings because any table with a Name column and a header containing "last" (e.g. "Last commit message") passed detection. This release tightens that logic:
 
-## Storage keys
+- Listing columns must look like file metadata (`Last modified`, `Size`, `Description`)
+- Tables with SCM headers (`commit`, `author`, `message`, etc.) are ignored
+- `github.com`, `gitlab.com`, and `bitbucket.org` are excluded from auto-detection
 
-| Setting | Key | Default |
-|---------|-----|---------|
-| Theme | `opendir-theme` | `light` |
-| View | `opendir-view` | `list` |
-| Thumbnails | `opendir-thumbnails` | `{ images: false, videos: false }` |
-| Download delay | `opendir-downloadDelayMs` | `1500` |
-| Random gaps | `opendir-downloadRandom` | `true` |
+Apache `<pre>` listings and nginx-style directory tables still activate as before.
 
-## Requirements
+## Previous releases
 
-- Google Chrome (Manifest V3)
-- Node.js 18+ (build only)
-
-## Legal
-
-Personal tool. See `NOTICE.md`. Toolbar icons are placeholders — replace before any public store submission.
+See [CHANGELOG.md](CHANGELOG.md) for full history.
