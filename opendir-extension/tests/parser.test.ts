@@ -88,6 +88,18 @@ describe('parser', () => {
     const items = parseLinks(doc);
     expect(items).toHaveLength(1);
   });
+
+  it('uses full href basename when link text is truncated by the server', () => {
+    const doc = parseHtml(`
+      <html><body><pre>
+        <a href="Alex%20Archer.-.Rogue%20Angel%20Bk03.-.The%20Spider%20Stone.zip">Alex Archer.-.Rogue Angel Bk03.-.The Spider Sto.</a>
+      </pre></body></html>
+    `, 'http://example.com/audiobooks/');
+    const items = parseLinks(doc);
+    expect(items).toHaveLength(1);
+    expect(items[0].name).toBe('Alex Archer.-.Rogue Angel Bk03.-.The Spider Stone.zip');
+    expect(items[0].ext).toBe('zip');
+  });
 });
 
 describe('format helpers', () => {

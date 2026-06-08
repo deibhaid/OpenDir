@@ -88,12 +88,12 @@ const COLOR_MAP = {
 
 export function FileTypeIcon({
   item,
-  className = 'h-5 w-5 shrink-0',
+  className,
 }: {
   item: DirectoryItem;
   className?: string;
 }) {
-  const iconClass = cn(className);
+  const iconClass = cn('h-5 w-5 shrink-0', className);
 
   if (item.type === 'directory' || item.isParent) {
     return <FolderIcon className={cn(iconClass, COLOR_MAP.folder)} />;

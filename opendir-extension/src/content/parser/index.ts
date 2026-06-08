@@ -20,6 +20,18 @@ export function isParentLink(href: string, baseUrl: string): boolean {
   }
 }
 
+export function basenameFromHref(href: string, hrefAttr: string): string {
+  try {
+    const segment = new URL(href).pathname.split('/').filter(Boolean).pop();
+    if (segment) return decodeURIComponent(segment);
+  } catch {
+    // fall through
+  }
+
+  const fromAttr = hrefAttr.split('?')[0].replace(/\/$/, '').split('/').pop();
+  return fromAttr ? decodeURIComponent(fromAttr) : hrefAttr;
+}
+
 export function parseAnchor(anchor: HTMLAnchorElement, baseUrl: string): DirectoryItem | null {
   const hrefAttr = anchor.getAttribute('href');
   if (!hrefAttr || hrefAttr === '?' || hrefAttr.startsWith('#')) return null;
@@ -37,7 +49,7 @@ export function parseAnchor(anchor: HTMLAnchorElement, baseUrl: string): Directo
   const hrefNoQuery = `${hrefUrl.origin}${hrefUrl.pathname}`;
   if (hrefNoQuery === currentNoQuery) return null;
 
-  const linkText = (anchor.textContent ?? '').trim() || hrefAttr;
+  const linkText = (anchor.textContent ?? '').trim();
   const parent = isParentLink(hrefAttr, baseUrl);
 
   if (parent) {
@@ -49,8 +61,14 @@ export function parseAnchor(anchor: HTMLAnchorElement, baseUrl: string): Directo
     };
   }
 
-  const name = linkText.replace(/\/$/, '') || hrefAttr.replace(/\/$/, '').split('/').pop() || hrefAttr;
-  const isDir = isDirectoryName(linkText, hrefAttr);
+  // Prefer href basename — directory servers often truncate visible link text.
+  const hrefName = basenameFromHref(href, hrefAttr);
+  const name =
+    hrefName ||
+    linkText.replace(/\/$/, '') ||
+    hrefAttr.replace(/\/$/, '').split('/').pop() ||
+    hrefAttr;
+  const isDir = isDirectoryName(name, hrefAttr);
   const ext = isDir ? undefined : getExtension(name);
 
   return {
