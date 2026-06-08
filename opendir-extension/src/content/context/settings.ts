@@ -1,7 +1,7 @@
 import {
   DEFAULT_SETTINGS,
+  ALL_EXTENSIONS_FILTER,
   type DirectoryItem,
-  type FilterType,
   type OpenDirSettings,
   PAGE_SIZE,
   PREVIEWABLE_FILE_TYPES,
@@ -46,30 +46,24 @@ export async function saveSetting<K extends keyof OpenDirSettings>(
   }
 }
 
-export function filterMatchesType(item: DirectoryItem, filter: FilterType): boolean {
-  if (item.isParent) return true;
-  switch (filter) {
-    case 'all':
-      return true;
-    case 'folders':
-      return item.type === 'directory';
-    case 'files':
-      return item.type === 'file';
-    case 'images':
-      return item.fileType === 'image';
-    case 'videos':
-      return item.fileType === 'video';
-    case 'audio':
-      return item.fileType === 'audio';
-    case 'documents':
-      return item.fileType === 'document';
-    case 'code':
-      return item.fileType === 'code';
-    case 'archives':
-      return item.fileType === 'archive';
-    default:
-      return true;
+export function getDirectoryExtensions(items: DirectoryItem[]): string[] {
+  const exts = new Set<string>();
+  for (const item of items) {
+    if (item.isParent || item.type === 'directory' || !item.ext) continue;
+    exts.add(item.ext.toLowerCase());
   }
+  return Array.from(exts).sort((a, b) => a.localeCompare(b));
+}
+
+export function filterMatchesExtension(item: DirectoryItem, extensionFilter: string): boolean {
+  if (item.isParent) return true;
+  if (extensionFilter === ALL_EXTENSIONS_FILTER) return true;
+  if (item.type === 'directory') return false;
+
+  const normalized = extensionFilter.startsWith('.')
+    ? extensionFilter.slice(1).toLowerCase()
+    : extensionFilter.toLowerCase();
+  return (item.ext ?? '').toLowerCase() === normalized;
 }
 
 export function compareItems(a: DirectoryItem, b: DirectoryItem, column: SortColumn, dir: SortDir): number {
@@ -98,7 +92,7 @@ export function compareItems(a: DirectoryItem, b: DirectoryItem, column: SortCol
 export function getFilteredSortedItems(
   items: DirectoryItem[],
   search: string,
-  filter: FilterType,
+  extensionFilter: string,
   sortColumn: SortColumn,
   sortDir: SortDir,
 ): DirectoryItem[] {
@@ -106,7 +100,7 @@ export function getFilteredSortedItems(
   const filtered = items.filter((item) => {
     if (item.isParent) return true;
     if (query && !item.name.toLowerCase().includes(query)) return false;
-    return filterMatchesType(item, filter);
+    return filterMatchesExtension(item, extensionFilter);
   });
 
   const parent = filtered.find((item) => item.isParent);

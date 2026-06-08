@@ -9,16 +9,10 @@ export type FileType =
   | 'archive'
   | 'default';
 
-export type FilterType =
-  | 'all'
-  | 'folders'
-  | 'files'
-  | 'images'
-  | 'videos'
-  | 'audio'
-  | 'documents'
-  | 'code'
-  | 'archives';
+/** Extension filter value; `.*` matches all items. */
+export type ExtensionFilter = string;
+
+export const ALL_EXTENSIONS_FILTER = '.*';
 
 export type ViewMode = 'grid' | 'list';
 export type ThemeMode = 'light' | 'dark' | 'system';

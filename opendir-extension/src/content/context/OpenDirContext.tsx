@@ -7,17 +7,18 @@ import React, {
   useState,
 } from 'react';
 import { downloadSelected as runBatchDownload } from '../download/batchDownload';
-import type {
-  DirectoryItem,
-  FilterType,
-  OpenDirSettings,
-  SortColumn,
-  SortDir,
-  ThemeMode,
-  ThumbnailSettings,
-  ViewMode,
+import {
+  ALL_EXTENSIONS_FILTER,
+  type DirectoryItem,
+  type OpenDirSettings,
+  type SortColumn,
+  type SortDir,
+  type ThemeMode,
+  type ThumbnailSettings,
+  type ViewMode,
 } from '../types';
 import {
+  getDirectoryExtensions,
   getFilteredSortedItems,
   getFooterText,
   getNextSortState,
@@ -35,8 +36,9 @@ interface OpenDirContextValue {
   setView: (view: ViewMode) => void;
   thumbnails: ThumbnailSettings;
   setThumbnails: (value: ThumbnailSettings) => void;
-  fileTypeFilter: FilterType;
-  setFileTypeFilter: (filter: FilterType) => void;
+  extensionFilter: string;
+  setExtensionFilter: (filter: string) => void;
+  directoryExtensions: string[];
   sortColumn: SortColumn;
   sortDir: SortDir;
   toggleSort: (column: SortColumn) => void;
@@ -81,7 +83,7 @@ export function OpenDirProvider({
     images: false,
     videos: false,
   });
-  const [fileTypeFilter, setFileTypeFilter] = useState<FilterType>('all');
+  const [extensionFilter, setExtensionFilter] = useState<string>(ALL_EXTENSIONS_FILTER);
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [selectedHrefs, setSelectedHrefs] = useState<Set<string>>(new Set());
@@ -106,11 +108,21 @@ export function OpenDirProvider({
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [search, fileTypeFilter, sortColumn, sortDir]);
+  }, [search, extensionFilter, sortColumn, sortDir]);
+
+  const directoryExtensions = useMemo(() => getDirectoryExtensions(items), [items]);
+
+  useEffect(() => {
+    if (extensionFilter === ALL_EXTENSIONS_FILTER) return;
+    const available = new Set(directoryExtensions.map((ext) => `.${ext}`));
+    if (!available.has(extensionFilter)) {
+      setExtensionFilter(ALL_EXTENSIONS_FILTER);
+    }
+  }, [directoryExtensions, extensionFilter]);
 
   const filteredSortedItems = useMemo(
-    () => getFilteredSortedItems(items, search, fileTypeFilter, sortColumn, sortDir),
-    [items, search, fileTypeFilter, sortColumn, sortDir],
+    () => getFilteredSortedItems(items, search, extensionFilter, sortColumn, sortDir),
+    [items, search, extensionFilter, sortColumn, sortDir],
   );
 
   const visibleItems = useMemo(
@@ -119,7 +131,7 @@ export function OpenDirProvider({
   );
 
   const hasMore = visibleCount < filteredSortedItems.length;
-  const hasActiveFilter = search.trim().length > 0 || fileTypeFilter !== 'all';
+  const hasActiveFilter = search.trim().length > 0 || extensionFilter !== ALL_EXTENSIONS_FILTER;
   const footerText = getFooterText(filteredSortedItems.length, hasActiveFilter);
 
   const allVisibleSelected =
@@ -212,8 +224,9 @@ export function OpenDirProvider({
     setView,
     thumbnails,
     setThumbnails,
-    fileTypeFilter,
-    setFileTypeFilter,
+    extensionFilter,
+    setExtensionFilter,
+    directoryExtensions,
     sortColumn,
     sortDir,
     toggleSort,

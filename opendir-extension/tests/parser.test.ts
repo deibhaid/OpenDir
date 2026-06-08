@@ -9,7 +9,8 @@ import {
 } from '../src/content/parser/format';
 import {
   compareItems,
-  filterMatchesType,
+  filterMatchesExtension,
+  getDirectoryExtensions,
   getFilteredSortedItems,
 } from '../src/content/context/settings';
 import type { DirectoryItem } from '../src/content/types';
@@ -119,16 +120,20 @@ describe('filter and sort', () => {
     { name: 'a.png', href: 'http://x/a.png', type: 'file', ext: 'png', fileType: 'image', size: 100 },
   ];
 
-  it('keeps parent first and filters by type', () => {
-    const filtered = getFilteredSortedItems(items, '', 'images', 'name', 'asc');
+  it('keeps parent first and filters by extension', () => {
+    const filtered = getFilteredSortedItems(items, '', '.png', 'name', 'asc');
     expect(filtered[0].isParent).toBe(true);
     expect(filtered).toHaveLength(2);
-    expect(filterMatchesType(items[2], 'images')).toBe(true);
-    expect(filterMatchesType(items[1], 'images')).toBe(false);
+    expect(filterMatchesExtension(items[2], '.png')).toBe(true);
+    expect(filterMatchesExtension(items[1], '.png')).toBe(false);
+  });
+
+  it('collects unique directory extensions', () => {
+    expect(getDirectoryExtensions(items)).toEqual(['png', 'txt']);
   });
 
   it('sorts by size desc with parent pinned first', () => {
-    const sorted = getFilteredSortedItems(items, '', 'all', 'size', 'desc');
+    const sorted = getFilteredSortedItems(items, '', '.*', 'size', 'desc');
     expect(sorted[0].isParent).toBe(true);
     expect(sorted[1].name).toBe('a.png');
     expect(compareItems(items[1], items[2], 'size', 'desc')).toBeGreaterThan(0);
