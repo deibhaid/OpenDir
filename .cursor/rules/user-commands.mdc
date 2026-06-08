@@ -13,13 +13,26 @@ When the user needs to run something locally (git pull, build, reload extension,
 - Do not hand off partial steps or assume they know which directory to be in.
 - Include reload/reminder lines after build when relevant (Chrome extension reload).
 
-Example format:
+Example format (include discard before pull — local `npm run build` often modifies `manifest.json`):
 
 ```bash
 cd ~/ws/scriptdir/scripts/general/OpenDir
+git restore opendir-extension/manifest.json
 git pull origin cursor/fix-truncated-filenames-cd8c
 cd opendir-extension
 npm run build
+grep '"version"' dist/manifest.json
+```
+
+If `git restore` is not enough or you have other local edits to keep, stash instead of discard:
+
+```bash
+cd ~/ws/scriptdir/scripts/general/OpenDir
+git stash push -m "before opendir pull" -- opendir-extension/manifest.json
+git pull origin cursor/fix-truncated-filenames-cd8c
+cd opendir-extension
+npm run build
+grep '"version"' dist/manifest.json
 ```
 
 Then: reload `opendir-extension/dist/` in Chrome at `chrome://extensions`.
