@@ -30,6 +30,8 @@ export interface DirectoryItem {
   modified?: string;
   created?: string;
   isParent?: boolean;
+  /** Path from the current directory root when found via recursive search. */
+  relativePath?: string;
 }
 
 export interface ThumbnailSettings {

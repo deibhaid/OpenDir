@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { downloadSelected as runBatchDownload } from '../download/batchDownload';
+import { searchRecursively } from '../lib/recursiveSearch';
 import { getRangeHrefs } from '../lib/selection';
 import {
   ALL_EXTENSIONS_FILTER,
@@ -34,6 +35,9 @@ interface OpenDirContextValue {
   items: DirectoryItem[];
   search: string;
   setSearch: (value: string) => void;
+  recursiveSearch: boolean;
+  setRecursiveSearch: (value: boolean) => void;
+  recursiveSearchLoading: boolean;
   view: ViewMode;
   setView: (view: ViewMode) => void;
   thumbnails: ThumbnailSettings;
@@ -81,6 +85,9 @@ export function OpenDirProvider({
 }) {
   const [items] = useState(initialItems);
   const [search, setSearch] = useState('');
+  const [recursiveSearch, setRecursiveSearch] = useState(false);
+  const [recursiveResults, setRecursiveResults] = useState<DirectoryItem[] | null>(null);
+  const [recursiveSearchLoading, setRecursiveSearchLoading] = useState(false);
   const [view, setViewState] = useState<ViewMode>('list');
   const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({
     images: false,
@@ -112,7 +119,51 @@ export function OpenDirProvider({
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [search, extensionFilter, sortColumn, sortDir]);
+  }, [search, extensionFilter, sortColumn, sortDir, recursiveSearch, recursiveResults]);
+
+  useEffect(() => {
+    if (!recursiveSearch || !search.trim()) {
+      setRecursiveResults(null);
+      setRecursiveSearchLoading(false);
+      return;
+    }
+
+    setRecursiveResults(null);
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      setRecursiveSearchLoading(true);
+      void searchRecursively(
+        items,
+        window.location.href,
+        search,
+        extensionFilter,
+        controller.signal,
+      )
+        .then((results) => {
+          if (!controller.signal.aborted) {
+            setRecursiveResults(results);
+          }
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) {
+            setRecursiveSearchLoading(false);
+          }
+        });
+    }, 300);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+      setRecursiveSearchLoading(false);
+    };
+  }, [recursiveSearch, search, extensionFilter, items]);
+
+  const listingItems = useMemo(() => {
+    if (recursiveSearch && search.trim() && recursiveResults) {
+      return recursiveResults;
+    }
+    return items;
+  }, [recursiveSearch, search, recursiveResults, items]);
 
   const directoryExtensions = useMemo(() => getDirectoryExtensions(items), [items]);
 
@@ -125,8 +176,8 @@ export function OpenDirProvider({
   }, [directoryExtensions, extensionFilter]);
 
   const filteredSortedItems = useMemo(
-    () => getFilteredSortedItems(items, search, extensionFilter, sortColumn, sortDir),
-    [items, search, extensionFilter, sortColumn, sortDir],
+    () => getFilteredSortedItems(listingItems, search, extensionFilter, sortColumn, sortDir),
+    [listingItems, search, extensionFilter, sortColumn, sortDir],
   );
 
   const visibleItems = useMemo(
@@ -135,8 +186,20 @@ export function OpenDirProvider({
   );
 
   const hasMore = visibleCount < filteredSortedItems.length;
-  const hasActiveFilter = search.trim().length > 0 || extensionFilter !== ALL_EXTENSIONS_FILTER;
-  const footerText = getFooterText(filteredSortedItems.length, hasActiveFilter);
+  const hasActiveFilter =
+    search.trim().length > 0 ||
+    extensionFilter !== ALL_EXTENSIONS_FILTER ||
+    (recursiveSearch && search.trim().length > 0);
+  const footerText = useMemo(() => {
+    const base = getFooterText(filteredSortedItems.length, hasActiveFilter);
+    if (recursiveSearchLoading) {
+      return `${base} — searching subfolders…`;
+    }
+    if (recursiveSearch && search.trim()) {
+      return `${base} (recursive)`;
+    }
+    return base;
+  }, [filteredSortedItems.length, hasActiveFilter, recursiveSearchLoading, recursiveSearch, search]);
 
   const allVisibleSelected =
     visibleItems.length > 0 && visibleItems.every((item) => selectedHrefs.has(item.href));
@@ -251,6 +314,9 @@ export function OpenDirProvider({
     items,
     search,
     setSearch,
+    recursiveSearch,
+    setRecursiveSearch,
+    recursiveSearchLoading,
     view,
     setView,
     thumbnails,

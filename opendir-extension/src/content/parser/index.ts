@@ -143,8 +143,7 @@ export function extractTableMetadata(table: HTMLTableElement): Map<string, Pick<
   return result;
 }
 
-export function parseLinks(documentRef: Document): DirectoryItem[] {
-  const baseUrl = documentRef.location.href;
+export function parseLinks(documentRef: Document, baseUrl: string = documentRef.location.href): DirectoryItem[] {
   const seen = new Set<string>();
   const items: DirectoryItem[] = [];
 
@@ -183,4 +182,9 @@ export function parseLinks(documentRef: Document): DirectoryItem[] {
 
 export function parseDirectoryListing(documentRef: Document = document): DirectoryItem[] {
   return parseLinks(documentRef);
+}
+
+export function parseDirectoryListingFromHtml(html: string, pageUrl: string): DirectoryItem[] {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return parseLinks(doc, pageUrl);
 }

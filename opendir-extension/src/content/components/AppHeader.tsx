@@ -1,4 +1,4 @@
-import { LayoutGrid, LayoutList, X } from 'lucide-react';
+import { Infinity, LayoutGrid, LayoutList, X } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { ExtensionFilterSelect } from './ExtensionFilterSelect';
 import { SettingsDropdown } from './SettingsDropdown';
@@ -10,6 +10,8 @@ export function AppHeader() {
   const {
     search,
     setSearch,
+    recursiveSearch,
+    setRecursiveSearch,
     view,
     setView,
     selectedHrefs,
@@ -74,6 +76,19 @@ export function AppHeader() {
                 <X className="h-4 w-4" />
               </Button>
             )}
+            <div className="flex h-full shrink-0 items-center border-l border-border/80">
+              <Button
+                variant={recursiveSearch ? 'toolbarActive' : 'toolbar'}
+                size="icon"
+                title="Search subfolders recursively"
+                aria-label="Search subfolders recursively"
+                aria-pressed={recursiveSearch}
+                onClick={() => setRecursiveSearch(!recursiveSearch)}
+                className="h-10 w-9 shrink-0 rounded-none"
+              >
+                <Infinity className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="flex h-full shrink-0 items-center border-l border-border/80 bg-muted/20">
               <ExtensionFilterSelect />
             </div>

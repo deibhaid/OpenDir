@@ -1,8 +1,22 @@
-import { FolderOpen, SearchX } from 'lucide-react';
+import { FolderOpen, Loader2, SearchX } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
 
 export function EmptyState() {
-  const { search, hasActiveFilter } = useOpenDir();
+  const { search, hasActiveFilter, recursiveSearch, recursiveSearchLoading } = useOpenDir();
+
+  if (recursiveSearchLoading && recursiveSearch && search.trim()) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="max-w-md text-center">
+          <Loader2 className="mx-auto mb-4 h-16 w-16 animate-spin text-muted-foreground/60" />
+          <h3 className="mb-2 text-lg font-semibold">Searching subfolders</h3>
+          <p className="text-sm text-muted-foreground">
+            Looking for matches to &quot;{search}&quot; in every child directory…
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (hasActiveFilter) {
     return (
