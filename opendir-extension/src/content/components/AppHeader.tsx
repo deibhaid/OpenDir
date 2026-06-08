@@ -6,7 +6,6 @@ import { SettingsDropdown } from './SettingsDropdown';
 import { useOpenDir } from '../context/OpenDirContext';
 import type { FilterType } from '../types';
 import { Button } from './ui/Button';
-import { cn } from '../lib/utils';
 
 const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All Items' },
@@ -25,12 +24,7 @@ export function AppHeader() {
   const filterActive = fileTypeFilter !== 'all';
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-10 flex flex-col gap-3 border-b',
-        'bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6',
-      )}
-    >
+    <header className="sticky top-0 z-10 flex flex-col gap-4 border-b border-border/70 bg-background/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">
           <Breadcrumb />
@@ -45,7 +39,7 @@ export function AppHeader() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search files and folders..."
-            className="h-9 w-full rounded-md border border-input bg-background py-2 pl-3 pr-9 text-sm"
+            className="h-10 w-full rounded-lg border border-border/80 bg-background px-3 pr-10 text-sm shadow-sm placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
           />
           {search && (
             <Button
@@ -54,7 +48,7 @@ export function AppHeader() {
               title="Clear search"
               aria-label="Clear search"
               onClick={() => setSearch('')}
-              className="absolute right-0 top-0 h-9 w-9"
+              className="absolute right-0.5 top-0.5 h-9 w-9 text-muted-foreground"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -64,7 +58,7 @@ export function AppHeader() {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button
-              variant={filterActive ? 'default' : 'outline'}
+              variant={filterActive ? 'toolbarActive' : 'toolbar'}
               size="icon"
               title="Filter by type"
               aria-label="Filter by type"
@@ -110,7 +104,7 @@ export function AppHeader() {
 
         <div className="flex gap-1">
           <Button
-            variant={view === 'grid' ? 'default' : 'outline'}
+            variant={view === 'grid' ? 'toolbarActive' : 'toolbar'}
             size="icon"
             title="Grid view"
             aria-label="Grid view"
@@ -119,7 +113,7 @@ export function AppHeader() {
             <LayoutGrid className="h-4 w-4" />
           </Button>
           <Button
-            variant={view === 'list' ? 'default' : 'outline'}
+            variant={view === 'list' ? 'toolbarActive' : 'toolbar'}
             size="icon"
             title="List view"
             aria-label="List view"

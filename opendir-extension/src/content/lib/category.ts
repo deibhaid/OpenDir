@@ -63,10 +63,10 @@ export function getCategoryStyle(item: DirectoryItem): CategoryStyle {
     case 'archive':
       return {
         label: 'Archive',
-        text: 'text-yellow-700 dark:text-yellow-400',
-        border: 'border-yellow-200 dark:border-yellow-800',
-        bg: 'bg-yellow-50 dark:bg-yellow-950/40',
-        badge: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-200',
+        text: 'text-amber-500 dark:text-amber-400',
+        border: 'border-amber-200 dark:border-amber-800',
+        bg: 'bg-amber-50 dark:bg-amber-950/40',
+        badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200',
       };
     default:
       return {

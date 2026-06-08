@@ -21,7 +21,7 @@ export function SettingsDropdown() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <Button variant="outline" size="icon" title="Settings" aria-label="Settings">
+        <Button variant="toolbar" size="icon" title="Settings" aria-label="Settings">
           <Settings2 className="h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>

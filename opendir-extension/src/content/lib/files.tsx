@@ -1,47 +1,7 @@
-import {
-  Archive,
-  Code2,
-  File,
-  FileAudio,
-  FileImage,
-  FileText,
-  FileVideo,
-  Folder,
-} from 'lucide-react';
-import { getCategoryStyle } from './category';
+import { FileTypeIcon } from '../components/FileTypeIcon';
 import type { DirectoryItem } from '../types';
 
-export function FileTypeIcon({
-  item,
-  className = 'h-5 w-5',
-}: {
-  item: DirectoryItem;
-  className?: string;
-}) {
-  const style = getCategoryStyle(item);
-  const iconClass = `${className} ${style.text}`;
-
-  if (item.type === 'directory' || item.isParent) {
-    return <Folder className={iconClass} aria-hidden />;
-  }
-
-  switch (item.fileType) {
-    case 'image':
-      return <FileImage className={iconClass} aria-hidden />;
-    case 'video':
-      return <FileVideo className={iconClass} aria-hidden />;
-    case 'audio':
-      return <FileAudio className={iconClass} aria-hidden />;
-    case 'document':
-      return <FileText className={iconClass} aria-hidden />;
-    case 'code':
-      return <Code2 className={iconClass} aria-hidden />;
-    case 'archive':
-      return <Archive className={iconClass} aria-hidden />;
-    default:
-      return <File className={iconClass} aria-hidden />;
-  }
-}
+export { FileTypeIcon };
 
 export function triggerDownload(href: string, filename?: string): void {
   const anchor = document.createElement('a');

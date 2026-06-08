@@ -1,1 +1,1 @@
-Placeholder icons for OpenDir. Replace before public release.
+Original OpenDir placeholder icons (teal folder + listing motif). Replace before public release.
