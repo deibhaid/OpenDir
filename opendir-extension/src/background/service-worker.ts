@@ -42,6 +42,58 @@ export async function injectOpenDir(tabId: number, url: string): Promise<void> {
  * Keep in sync with src/shared/directoryIndex.ts
  */
 function detectOpenDirectoryOnPage(): boolean {
+  const scmTableHeader =
+    /\b(commit|author|branch|fork|issue|message|pull request|star|watch)\b/i;
+
+  function isScmTableHeader(header: string): boolean {
+    return scmTableHeader.test(header.trim());
+  }
+
+  function isNameColumnHeader(header: string): boolean {
+    const normalized = header.trim().toLowerCase();
+    return /\bname\b/.test(normalized) || /\bfile\b/.test(normalized);
+  }
+
+  function isListingMetadataHeader(header: string): boolean {
+    const normalized = header.trim().toLowerCase();
+    if (isScmTableHeader(normalized)) return false;
+
+    if (normalized.includes('last modified') || normalized.includes('last-modified')) {
+      return true;
+    }
+
+    if (normalized.includes('modified') && !normalized.includes('commit')) {
+      return true;
+    }
+
+    if (/\bsize\b/.test(normalized)) {
+      return true;
+    }
+
+    if (normalized.includes('description')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function isKnownNonDirectoryHost(hostname: string): boolean {
+    const host = hostname.trim().toLowerCase();
+    return (
+      host === 'github.com' ||
+      host === 'www.github.com' ||
+      host === 'gitlab.com' ||
+      host === 'www.gitlab.com' ||
+      host === 'bitbucket.org' ||
+      host === 'www.bitbucket.org'
+    );
+  }
+
+  const locationHost = document.location?.hostname ?? '';
+  if (locationHost && isKnownNonDirectoryHost(locationHost)) {
+    return false;
+  }
+
   const titleMatch = /^index of(\s|\/|$)/i.test(document.title.trim());
   const h1 = document.querySelector('h1');
   const h1Match = h1 ? /^index of(\s|\/|$)/i.test((h1.textContent ?? '').trim()) : false;
@@ -62,20 +114,16 @@ function detectOpenDirectoryOnPage(): boolean {
     if (!headerRow) continue;
 
     const headers = Array.from(headerRow.querySelectorAll('th, td')).map((cell) =>
-      (cell.textContent ?? '').trim().toLowerCase(),
+      (cell.textContent ?? '').trim(),
     );
     if (headers.length === 0) continue;
 
-    const hasNameColumn = headers.some(
-      (header) => header.includes('name') || header.includes('file'),
-    );
-    const hasListingColumn = headers.some(
-      (header) =>
-        header.includes('size') ||
-        header.includes('modified') ||
-        header.includes('last') ||
-        header.includes('description'),
-    );
+    if (headers.some((header) => isScmTableHeader(header))) {
+      continue;
+    }
+
+    const hasNameColumn = headers.some((header) => isNameColumnHeader(header));
+    const hasListingColumn = headers.some((header) => isListingMetadataHeader(header));
     const hasLinks = table.querySelector('a[href]');
 
     if (hasNameColumn && hasListingColumn && hasLinks) {

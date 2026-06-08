@@ -37,6 +37,31 @@ describe('detectDirectoryIndex', () => {
     expect(detectDirectoryIndex(doc(html))).toBe(false);
   });
 
+  it('rejects GitHub-style repository file tables', () => {
+    const html = `
+      <html><head><title>deibhaid/aria2chrome</title></head><body>
+        <table>
+          <tr><th>Name</th><th>Last commit message</th><th>Last commit date</th></tr>
+          <tr><td><a href="README.md">README.md</a></td><td>Update docs</td><td>2 days ago</td></tr>
+          <tr><td><a href="manifest.json">manifest.json</a></td><td>Initial commit</td><td>1 week ago</td></tr>
+        </table>
+      </body></html>
+    `;
+    expect(
+      detectDirectoryIndex(doc(html, 'https://github.com/deibhaid/aria2chrome/')),
+    ).toBe(false);
+  });
+
+  it('rejects tables that only match loose "last" headers', () => {
+    const html = `
+      <html><body><table>
+        <tr><th>Name</th><th>Last updated</th></tr>
+        <tr><td><a href="/item">Item</a></td><td>Today</td></tr>
+      </table></body></html>
+    `;
+    expect(detectDirectoryIndex(doc(html))).toBe(false);
+  });
+
   it('rejects empty pages', () => {
     expect(detectDirectoryIndex(doc('<html><body><p>Hello</p></body></html>'))).toBe(false);
   });
