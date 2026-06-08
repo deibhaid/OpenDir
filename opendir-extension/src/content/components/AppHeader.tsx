@@ -1,4 +1,4 @@
-import { Infinity, LayoutGrid, LayoutList, X } from 'lucide-react';
+import { Infinity, LayoutGrid, LayoutList } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { ExtensionFilterSelect } from './ExtensionFilterSelect';
 import { SettingsDropdown } from './SettingsDropdown';
@@ -61,21 +61,9 @@ export function AppHeader() {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search files and folders..."
+              placeholder="Search"
               className="min-w-0 flex-1 border-0 bg-transparent px-3 text-sm leading-10 placeholder:text-muted-foreground/70 focus-visible:outline-none"
             />
-            {search && (
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Clear search"
-                aria-label="Clear search"
-                onClick={() => setSearch('')}
-                className="h-10 w-9 shrink-0 rounded-none text-muted-foreground"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
             <div className="flex h-full shrink-0 items-center border-l border-border/80">
               <Button
                 variant={recursiveSearch ? 'toolbarActive' : 'toolbar'}
