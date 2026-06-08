@@ -22,7 +22,7 @@ export function ExtensionFilterSelect({ className }: { className?: string }) {
       style={{ width: fieldWidth }}
       className={cn(
         'h-full max-w-[4.5rem] shrink-0 cursor-pointer appearance-none border-0 bg-transparent',
-        'px-1 text-sm font-medium leading-10 text-foreground',
+        'px-1 text-center text-sm font-medium leading-10 text-foreground',
         'focus-visible:outline-none focus-visible:ring-0',
         className,
       )}
