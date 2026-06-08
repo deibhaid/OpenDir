@@ -1,16 +1,9 @@
 import { useOpenDir } from '../context/OpenDirContext';
-import { downloadSelectedFiles } from '../lib/files';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
 
 export function SelectionBar() {
-  const {
-    selectedHrefs,
-    clearSelection,
-    filteredSortedItems,
-    downloadDelayMs,
-    downloadRandom,
-  } = useOpenDir();
+  const { selectedHrefs, clearSelection, downloadSelected } = useOpenDir();
 
   const count = selectedHrefs.size;
   const hasSelection = count > 0;
@@ -25,12 +18,7 @@ export function SelectionBar() {
       {hasSelection && (
         <>
           <span>{count} selected</span>
-          <Button
-            size="sm"
-            onClick={() => {
-              void downloadSelectedFiles(filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom);
-            }}
-          >
+          <Button size="sm" onClick={downloadSelected}>
             Download selected
           </Button>
           <Button size="sm" variant="ghost" onClick={clearSelection}>

@@ -6,7 +6,17 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import type { DirectoryItem, FilterType, OpenDirSettings, SortColumn, SortDir, ThemeMode, ThumbnailSettings, ViewMode } from '../types';
+import { downloadSelected as runBatchDownload } from '../download/batchDownload';
+import type {
+  DirectoryItem,
+  FilterType,
+  OpenDirSettings,
+  SortColumn,
+  SortDir,
+  ThemeMode,
+  ThumbnailSettings,
+  ViewMode,
+} from '../types';
 import {
   getFilteredSortedItems,
   getFooterText,
@@ -15,6 +25,7 @@ import {
   PAGE_SIZE,
   saveSetting,
 } from './settings';
+import { applyThemeClass, ThemeProvider } from './ThemeProvider';
 
 interface OpenDirContextValue {
   items: DirectoryItem[];
@@ -30,9 +41,11 @@ interface OpenDirContextValue {
   sortDir: SortDir;
   toggleSort: (column: SortColumn) => void;
   selectedHrefs: Set<string>;
+  toggleItemSelect: (href: string) => void;
   toggleSelected: (href: string) => void;
   selectAllVisible: () => void;
   clearSelection: () => void;
+  downloadSelected: () => void;
   selectedItem: DirectoryItem | null;
   setSelectedItem: (item: DirectoryItem | null) => void;
   downloadDelayMs: number;
@@ -54,13 +67,6 @@ interface OpenDirContextValue {
 
 const OpenDirContext = createContext<OpenDirContextValue | null>(null);
 
-function applyThemeClass(theme: ThemeMode): void {
-  const root = document.documentElement;
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-  root.classList.toggle('dark', isDark);
-}
-
 export function OpenDirProvider({
   initialItems,
   children,
@@ -71,7 +77,10 @@ export function OpenDirProvider({
   const [items] = useState(initialItems);
   const [search, setSearch] = useState('');
   const [view, setViewState] = useState<ViewMode>('list');
-  const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({ images: true, videos: false });
+  const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({
+    images: false,
+    videos: false,
+  });
   const [fileTypeFilter, setFileTypeFilter] = useState<FilterType>('all');
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
@@ -96,16 +105,6 @@ export function OpenDirProvider({
   }, []);
 
   useEffect(() => {
-    applyThemeClass(theme);
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const listener = () => {
-      if (theme === 'system') applyThemeClass('system');
-    };
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
-  }, [theme]);
-
-  useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [search, fileTypeFilter, sortColumn, sortDir]);
 
@@ -123,8 +122,8 @@ export function OpenDirProvider({
   const hasActiveFilter = search.trim().length > 0 || fileTypeFilter !== 'all';
   const footerText = getFooterText(filteredSortedItems.length, hasActiveFilter);
 
-  const allVisibleSelected = visibleItems.length > 0 &&
-    visibleItems.every((item) => selectedHrefs.has(item.href));
+  const allVisibleSelected =
+    visibleItems.length > 0 && visibleItems.every((item) => selectedHrefs.has(item.href));
 
   const setView = useCallback((value: ViewMode) => {
     setViewState(value);
@@ -153,15 +152,18 @@ export function OpenDirProvider({
     void saveSetting('theme', value);
   }, []);
 
-  const toggleSort = useCallback((column: SortColumn) => {
-    const next = getNextSortState(sortColumn, sortDir, column);
-    setSortColumn(next.sortColumn);
-    setSortDir(next.sortDir);
-    void saveSetting('sortColumn', next.sortColumn);
-    void saveSetting('sortDir', next.sortDir);
-  }, [sortColumn, sortDir]);
+  const toggleSort = useCallback(
+    (column: SortColumn) => {
+      const next = getNextSortState(sortColumn, sortDir, column);
+      setSortColumn(next.sortColumn);
+      setSortDir(next.sortDir);
+      void saveSetting('sortColumn', next.sortColumn);
+      void saveSetting('sortDir', next.sortDir);
+    },
+    [sortColumn, sortDir],
+  );
 
-  const toggleSelected = useCallback((href: string) => {
+  const toggleItemSelect = useCallback((href: string) => {
     setSelectedHrefs((prev) => {
       const next = new Set(prev);
       if (next.has(href)) next.delete(href);
@@ -185,6 +187,10 @@ export function OpenDirProvider({
       selectAllVisible();
     }
   }, [allVisibleSelected, clearSelection, selectAllVisible]);
+
+  const downloadSelected = useCallback(() => {
+    runBatchDownload(filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom);
+  }, [filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom]);
 
   const loadMore = useCallback(() => {
     setVisibleCount((count) => count + PAGE_SIZE);
@@ -212,9 +218,11 @@ export function OpenDirProvider({
     sortDir,
     toggleSort,
     selectedHrefs,
-    toggleSelected,
+    toggleItemSelect,
+    toggleSelected: toggleItemSelect,
     selectAllVisible,
     clearSelection,
+    downloadSelected,
     selectedItem,
     setSelectedItem,
     downloadDelayMs,
@@ -234,7 +242,13 @@ export function OpenDirProvider({
     toggleSelectAllVisible,
   };
 
-  return <OpenDirContext.Provider value={value}>{children}</OpenDirContext.Provider>;
+  return (
+    <OpenDirContext.Provider value={value}>
+      <ThemeProvider theme={theme} setTheme={setTheme}>
+        {children}
+      </ThemeProvider>
+    </OpenDirContext.Provider>
+  );
 }
 
 export function useOpenDir(): OpenDirContextValue {
@@ -242,3 +256,5 @@ export function useOpenDir(): OpenDirContextValue {
   if (!context) throw new Error('useOpenDir must be used within OpenDirProvider');
   return context;
 }
+
+export { useTheme } from './ThemeProvider';

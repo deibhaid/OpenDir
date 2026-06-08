@@ -56,7 +56,7 @@ export interface OpenDirSettings {
 export const DEFAULT_SETTINGS: OpenDirSettings = {
   theme: 'light',
   view: 'list',
-  thumbnails: { images: true, videos: false },
+  thumbnails: { images: false, videos: false },
   downloadDelayMs: 1500,
   downloadRandom: true,
   sortColumn: 'name',
