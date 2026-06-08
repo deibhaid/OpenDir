@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useOpenDir } from '../context/OpenDirContext';
 import { ALL_EXTENSIONS_FILTER } from '../types';
 import { cn } from '../lib/utils';
@@ -5,15 +6,21 @@ import { cn } from '../lib/utils';
 export function ExtensionFilterSelect({ className }: { className?: string }) {
   const { extensionFilter, setExtensionFilter, directoryExtensions } = useOpenDir();
 
+  const fieldWidth = useMemo(() => {
+    const chars = Math.max(extensionFilter.length, ALL_EXTENSIONS_FILTER.length);
+    return `${Math.min(chars + 0.5, 12)}ch`;
+  }, [extensionFilter]);
+
   return (
     <select
       value={extensionFilter}
       onChange={(event) => setExtensionFilter(event.target.value)}
       aria-label="Filter by extension"
       title="Filter by extension"
+      style={{ width: fieldWidth }}
       className={cn(
-        'h-full min-w-[5.25rem] max-w-[7rem] shrink-0 cursor-pointer appearance-none border-0 bg-transparent',
-        'px-2.5 text-sm font-medium leading-10 text-foreground',
+        'h-full max-w-[4.5rem] shrink-0 cursor-pointer appearance-none border-0 bg-transparent',
+        'px-1 text-sm font-medium leading-10 text-foreground',
         'focus-visible:outline-none focus-visible:ring-0',
         className,
       )}

@@ -2,6 +2,25 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.3] — 2026-06-08
+
+### Changed
+
+- Compact extension filter dropdown in the search bar — width fits the selected `*.*` / `*.ext` label
+- Search toolbar keeps selection actions and view toggles on one stable row (no vertical or horizontal jump)
+
+### Fixed
+
+- OpenDir injects only on open HTTP(S) directory listings (not arbitrary pages)
+- Loader script runs as a classic IIFE (no module import error on inject)
+- `manifest.json` version stays synced with `package.json` on every build
+
+### Verified
+
+- Build, typecheck, and 26 unit tests passing
+
+[0.0.3]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.3
+
 ## [0.0.2] — 2026-06-08
 
 ### Added
