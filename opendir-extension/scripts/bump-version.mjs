@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { bumpVersion } from './version.mjs';
+import { syncManifestVersion } from './sync-version.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const extRoot = resolve(__dirname, '..');
@@ -42,13 +43,6 @@ function updatePackageLock(oldVersion, newVersion) {
   writeFileSync(path, content);
 }
 
-function updateManifest(oldVersion, newVersion) {
-  const path = resolve(extRoot, 'manifest.json');
-  let content = readFileSync(path, 'utf8');
-  content = content.replace(`"version": "${oldVersion}"`, `"version": "${newVersion}"`);
-  writeFileSync(path, content);
-}
-
 const pkg = JSON.parse(readFileSync(resolve(extRoot, 'package.json'), 'utf8'));
 const oldVersion = pkg.version;
 const newVersion = bumpVersion(oldVersion);
@@ -56,7 +50,7 @@ const newVersion = bumpVersion(oldVersion);
 pkg.version = newVersion;
 writeFileSync(resolve(extRoot, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);
 updatePackageLock(oldVersion, newVersion);
-updateManifest(oldVersion, newVersion);
+syncManifestVersion();
 
 for (const file of [
   resolve(extRoot, 'SPEC.md'),
@@ -67,4 +61,4 @@ for (const file of [
   replaceVersionInFile(file, oldVersion, newVersion);
 }
 
-console.log(`Bumped OpenDir ${oldVersion} -> ${newVersion}`);
+console.log(`Bumped OpenDir ${oldVersion} -> ${newVersion} (manifest synced)`);

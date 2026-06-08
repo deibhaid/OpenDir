@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
-    "build": "node scripts/generate-icons.mjs && vite build",
+    "build": "node scripts/sync-version.mjs && node scripts/generate-icons.mjs && vite build",
     "version:bump": "node scripts/bump-version.mjs",
+    "version:sync": "node scripts/sync-version.mjs",
     "release:package": "node scripts/package-release.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

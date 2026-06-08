@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
+function readPackageVersion(): string {
+  const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'));
+  return pkg.version;
+}
+
 function copyManifestPlugin() {
   return {
     name: 'copy-manifest',
@@ -21,6 +26,7 @@ function copyManifestPlugin() {
         copyFileSync(resolve(iconsSrc, `icon${size}.png`), resolve(iconsDest, `icon${size}.png`));
       }
       const manifest = JSON.parse(readFileSync(resolve(dist, 'manifest.json'), 'utf-8'));
+      manifest.version = readPackageVersion();
       manifest.background.service_worker = 'service-worker.js';
       manifest.web_accessible_resources = [
         {

@@ -24,6 +24,8 @@ cd opendir-extension
 node scripts/bump-version.mjs
 ```
 
+`package.json` is the canonical version. `bump-version.mjs` updates it and syncs `manifest.json` so Chrome and the GitHub tag (`v0.0.2`) always match. Every `npm run build` re-syncs manifest from package.json and writes that version into `dist/manifest.json`.
+
 Update `CHANGELOG.md` with the new version section before committing.
 
 ## Build and package

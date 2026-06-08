@@ -41,6 +41,8 @@ When drafting a new release, bump the version automatically:
 
 Each segment is single-digit (0–9). Increment patch; at patch 9 roll to minor; at minor 9 roll to major.
 
+**Canonical version:** `opendir-extension/package.json`. `manifest.json` and `dist/manifest.json` are synced from it on every build so Chrome shows the same version as the GitHub release tag (`v0.0.2` → `"version": "0.0.2"`).
+
 ```bash
 cd opendir-extension
 node scripts/bump-version.mjs
