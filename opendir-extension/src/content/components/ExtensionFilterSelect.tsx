@@ -3,11 +3,13 @@ import { useOpenDir } from '../context/OpenDirContext';
 import { ALL_EXTENSIONS_FILTER } from '../types';
 import { cn } from '../lib/utils';
 
+const MIN_FILTER_FIELD_CHARS = 5;
+
 export function ExtensionFilterSelect({ className }: { className?: string }) {
   const { extensionFilter, setExtensionFilter, directoryExtensions } = useOpenDir();
 
   const fieldWidth = useMemo(() => {
-    const chars = Math.max(extensionFilter.length, ALL_EXTENSIONS_FILTER.length);
+    const chars = Math.max(extensionFilter.length, MIN_FILTER_FIELD_CHARS);
     return `${Math.min(chars + 0.5, 12)}ch`;
   }, [extensionFilter]);
 
