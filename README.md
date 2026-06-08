@@ -20,7 +20,7 @@ Repository: https://github.com/deibhaid/OpenDir
 
 ## Releases
 
-**Latest stable:** [v1.0.0](https://github.com/deibhaid/OpenDir/releases/tag/v1.0.0)
+**Latest release:** [v0.0.1](https://github.com/deibhaid/OpenDir/releases/tag/v0.0.1)
 
 Download the release zip or build from source. The extension displays as **OpenDir** in Chrome.
 

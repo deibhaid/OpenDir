@@ -1,4 +1,4 @@
-# OpenDir 1.0.0 — Stable Release
+# OpenDir 0.0.1 — Initial Release
 
 **Author:** David W. Bryson  
 **Type:** Chrome Manifest V3 extension (unpacked load)
@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **OpenDir-1.0.0.zip** from this release (or build from source).
+1. Download **OpenDir-0.0.1.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -29,6 +29,7 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 - Settings: theme, thumbnail toggles, multi-file download delay
 - Batch download with staggered timing
 - Image/video/audio preview modal
+- Full filenames when servers truncate directory link text
 - Clean-room implementation — no upstream bundle code
 
 ## Storage keys

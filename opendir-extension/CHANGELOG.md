@@ -2,9 +2,9 @@
 
 All notable changes to OpenDir are documented here.
 
-## [1.0.0] — 2026-06-07
+## [0.0.1] — 2026-06-08
 
-First stable release. Clean-room Chrome MV3 extension by David W. Bryson.
+Initial release. Clean-room Chrome MV3 extension by David W. Bryson.
 
 ### Added
 
@@ -24,12 +24,17 @@ First stable release. Clean-room Chrome MV3 extension by David W. Bryson.
 - Display names without redundant extensions in the Name column
 - Custom file-type icons and unique OpenDir toolbar icon
 
+### Fixed
+
+- Full filenames from href when server truncates anchor text in directory listings
+- List row layout when displaying long wrapped names (icon sizing)
+
 ### Docs
 
 - `SPEC.md`, `NOTICE.md`, `QA.md`, `UI_LAYOUT_QA.md`, `SETTINGS_AND_DOWNLOAD_PROMPTS.md`
 
 ### Verified
 
-- Build, typecheck, and 15 unit tests passing
+- Build, typecheck, and 17 unit tests passing
 
-[1.0.0]: https://github.com/deibhaid/OpenDir/releases/tag/v1.0.0
+[0.0.1]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.1
