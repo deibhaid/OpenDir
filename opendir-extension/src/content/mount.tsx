@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { parseDirectoryListing } from './parser';
+import { detectDirectoryIndex } from '../shared/directoryIndex';
 import './main.css';
 
 interface ExecuteOptions {
@@ -10,6 +11,11 @@ interface ExecuteOptions {
 
 export function mountOpenDir({ perf }: ExecuteOptions): void {
   if (document.documentElement.dataset.openDirActive === '1') {
+    return;
+  }
+
+  if (!detectDirectoryIndex(document)) {
+    console.info('[OpenDir] skipped — page is not an open directory listing');
     return;
   }
 
