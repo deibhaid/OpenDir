@@ -87,6 +87,7 @@ export function OpenDirProvider({
   const [search, setSearch] = useState('');
   const [recursiveSearch, setRecursiveSearch] = useState(false);
   const [recursiveResults, setRecursiveResults] = useState<DirectoryItem[] | null>(null);
+  const [recursiveDiscoveredItems, setRecursiveDiscoveredItems] = useState<DirectoryItem[]>([]);
   const [recursiveSearchLoading, setRecursiveSearchLoading] = useState(false);
   const [view, setViewState] = useState<ViewMode>('list');
   const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({
@@ -124,24 +125,21 @@ export function OpenDirProvider({
   useEffect(() => {
     if (!recursiveSearch || !search.trim()) {
       setRecursiveResults(null);
+      setRecursiveDiscoveredItems([]);
       setRecursiveSearchLoading(false);
       return;
     }
 
     setRecursiveResults(null);
+    setRecursiveDiscoveredItems([]);
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
       setRecursiveSearchLoading(true);
-      void searchRecursively(
-        items,
-        window.location.href,
-        search,
-        extensionFilter,
-        controller.signal,
-      )
+      void searchRecursively(items, window.location.href, search, controller.signal)
         .then((results) => {
           if (!controller.signal.aborted) {
-            setRecursiveResults(results);
+            setRecursiveResults(results.matches);
+            setRecursiveDiscoveredItems(results.discoveredItems);
           }
         })
         .finally(() => {
@@ -156,7 +154,7 @@ export function OpenDirProvider({
       controller.abort();
       setRecursiveSearchLoading(false);
     };
-  }, [recursiveSearch, search, extensionFilter, items]);
+  }, [recursiveSearch, search, items]);
 
   const listingItems = useMemo(() => {
     if (recursiveSearch && search.trim() && recursiveResults) {
@@ -165,7 +163,12 @@ export function OpenDirProvider({
     return items;
   }, [recursiveSearch, search, recursiveResults, items]);
 
-  const directoryExtensions = useMemo(() => getDirectoryExtensions(items), [items]);
+  const directoryExtensions = useMemo(() => {
+    if (recursiveSearch && search.trim() && recursiveDiscoveredItems.length > 0) {
+      return getDirectoryExtensions([...items, ...recursiveDiscoveredItems]);
+    }
+    return getDirectoryExtensions(items);
+  }, [items, recursiveSearch, search, recursiveDiscoveredItems]);
 
   useEffect(() => {
     if (extensionFilter === ALL_EXTENSIONS_FILTER) return;

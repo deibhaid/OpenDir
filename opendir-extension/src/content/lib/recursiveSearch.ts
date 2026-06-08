@@ -39,6 +39,13 @@ export function getRelativeDirectoryPath(itemUrl: string, rootUrl: string): stri
   return relative;
 }
 
+export function itemMatchesQuery(item: DirectoryItem, query: string): boolean {
+  if (item.isParent) return false;
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return false;
+  return item.name.toLowerCase().includes(normalizedQuery);
+}
+
 export function itemMatchesSearch(
   item: DirectoryItem,
   query: string,
@@ -48,6 +55,11 @@ export function itemMatchesSearch(
   const normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery && !item.name.toLowerCase().includes(normalizedQuery)) return false;
   return filterMatchesExtension(item, extensionFilter);
+}
+
+export interface RecursiveSearchResult {
+  matches: DirectoryItem[];
+  discoveredItems: DirectoryItem[];
 }
 
 export function withRelativePath(item: DirectoryItem, rootUrl: string): DirectoryItem {
@@ -96,22 +108,25 @@ export async function searchRecursively(
   seedItems: DirectoryItem[],
   rootUrl: string,
   query: string,
-  extensionFilter: string,
   signal: AbortSignal,
-): Promise<DirectoryItem[]> {
+): Promise<RecursiveSearchResult> {
   const normalizedQuery = query.trim();
   if (!normalizedQuery) {
-    return seedItems;
+    return { matches: seedItems, discoveredItems: [] };
   }
 
   const parent = seedItems.find((item) => item.isParent);
   const matches: DirectoryItem[] = [];
+  const discoveredItems: DirectoryItem[] = [];
   const visited = new Set<string>();
   const queue: string[] = [];
 
   for (const item of seedItems) {
     if (item.isParent) continue;
-    if (itemMatchesSearch(item, normalizedQuery, extensionFilter)) {
+    if (item.type === 'file') {
+      discoveredItems.push(item);
+    }
+    if (itemMatchesQuery(item, normalizedQuery)) {
       matches.push(item);
     }
     if (item.type === 'directory') {
@@ -139,7 +154,10 @@ export async function searchRecursively(
         if (!isDescendantDirectoryUrl(item.href, rootUrl)) continue;
 
         const enriched = withRelativePath(item, rootUrl);
-        if (itemMatchesSearch(enriched, normalizedQuery, extensionFilter)) {
+        if (item.type === 'file') {
+          discoveredItems.push(enriched);
+        }
+        if (itemMatchesQuery(enriched, normalizedQuery)) {
           matches.push(enriched);
         }
 
@@ -154,5 +172,8 @@ export async function searchRecursively(
     }
   }
 
-  return parent ? [parent, ...matches] : matches;
+  return {
+    matches: parent ? [parent, ...matches] : matches,
+    discoveredItems,
+  };
 }
