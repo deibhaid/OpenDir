@@ -9,9 +9,9 @@ function getRootHref(): string {
 function getRootLabel(): string {
   const root = new URL(getRootHref());
   if (root.protocol === 'file:') {
-    return root.href;
+    return root.href.replace(/\/$/, '');
   }
-  return `${root.origin}/`;
+  return root.origin;
 }
 
 function getSegmentHref(segments: string[], index: number): string {
