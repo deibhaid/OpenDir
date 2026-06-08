@@ -60,8 +60,8 @@ export function filterMatchesExtension(item: DirectoryItem, extensionFilter: str
   if (extensionFilter === ALL_EXTENSIONS_FILTER) return true;
   if (item.type === 'directory') return false;
 
-  const normalized = extensionFilter.startsWith('.')
-    ? extensionFilter.slice(1).toLowerCase()
+  const normalized = extensionFilter.startsWith('*.')
+    ? extensionFilter.slice(2).toLowerCase()
     : extensionFilter.toLowerCase();
   return (item.ext ?? '').toLowerCase() === normalized;
 }

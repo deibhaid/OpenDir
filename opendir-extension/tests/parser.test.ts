@@ -121,11 +121,11 @@ describe('filter and sort', () => {
   ];
 
   it('keeps parent first and filters by extension', () => {
-    const filtered = getFilteredSortedItems(items, '', '.png', 'name', 'asc');
+    const filtered = getFilteredSortedItems(items, '', '*.png', 'name', 'asc');
     expect(filtered[0].isParent).toBe(true);
     expect(filtered).toHaveLength(2);
-    expect(filterMatchesExtension(items[2], '.png')).toBe(true);
-    expect(filterMatchesExtension(items[1], '.png')).toBe(false);
+    expect(filterMatchesExtension(items[2], '*.png')).toBe(true);
+    expect(filterMatchesExtension(items[1], '*.png')).toBe(false);
   });
 
   it('collects unique directory extensions', () => {
@@ -133,7 +133,7 @@ describe('filter and sort', () => {
   });
 
   it('sorts by size desc with parent pinned first', () => {
-    const sorted = getFilteredSortedItems(items, '', '.*', 'size', 'desc');
+    const sorted = getFilteredSortedItems(items, '', '*.*', 'size', 'desc');
     expect(sorted[0].isParent).toBe(true);
     expect(sorted[1].name).toBe('a.png');
     expect(compareItems(items[1], items[2], 'size', 'desc')).toBeGreaterThan(0);

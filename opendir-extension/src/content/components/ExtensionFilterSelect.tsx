@@ -19,8 +19,8 @@ export function ExtensionFilterSelect({ className }: { className?: string }) {
     >
       <option value={ALL_EXTENSIONS_FILTER}>{ALL_EXTENSIONS_FILTER}</option>
       {directoryExtensions.map((ext) => (
-        <option key={ext} value={`.${ext}`}>
-          .{ext}
+        <option key={ext} value={`*.${ext}`}>
+          *.{ext}
         </option>
       ))}
     </select>

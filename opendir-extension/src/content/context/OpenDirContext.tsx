@@ -114,7 +114,7 @@ export function OpenDirProvider({
 
   useEffect(() => {
     if (extensionFilter === ALL_EXTENSIONS_FILTER) return;
-    const available = new Set(directoryExtensions.map((ext) => `.${ext}`));
+    const available = new Set(directoryExtensions.map((ext) => `*.${ext}`));
     if (!available.has(extensionFilter)) {
       setExtensionFilter(ALL_EXTENSIONS_FILTER);
     }

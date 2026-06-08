@@ -9,10 +9,10 @@ export type FileType =
   | 'archive'
   | 'default';
 
-/** Extension filter value; `.*` matches all items. */
+/** Extension filter value; `*.*` matches all items. */
 export type ExtensionFilter = string;
 
-export const ALL_EXTENSIONS_FILTER = '.*';
+export const ALL_EXTENSIONS_FILTER = '*.*';
 
 export type ViewMode = 'grid' | 'list';
 export type ThemeMode = 'light' | 'dark' | 'system';
