@@ -27,7 +27,7 @@ export function AppHeader() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search files and folders..."
-              className="min-w-0 flex-1 border-0 bg-transparent px-3 text-sm placeholder:text-muted-foreground/70 focus-visible:outline-none"
+              className="min-w-0 flex-1 border-0 bg-transparent px-3 text-sm leading-10 placeholder:text-muted-foreground/70 focus-visible:outline-none"
             />
             {search && (
               <Button
@@ -41,7 +41,7 @@ export function AppHeader() {
                 <X className="h-4 w-4" />
               </Button>
             )}
-            <div className="flex shrink-0 items-center border-l border-border/80 bg-muted/20">
+            <div className="flex h-full shrink-0 items-center border-l border-border/80 bg-muted/20">
               <ExtensionFilterSelect />
             </div>
           </div>

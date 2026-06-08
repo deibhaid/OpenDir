@@ -69,3 +69,8 @@ body {
 input[type='checkbox'] {
   accent-color: hsl(var(--foreground));
 }
+
+#root select {
+  font-size: 0.875rem;
+  line-height: 2.5rem;
+}

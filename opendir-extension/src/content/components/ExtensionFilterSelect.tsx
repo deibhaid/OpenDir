@@ -12,8 +12,9 @@ export function ExtensionFilterSelect({ className }: { className?: string }) {
       aria-label="Filter by extension"
       title="Filter by extension"
       className={cn(
-        'h-10 shrink-0 cursor-pointer border-0 bg-transparent px-2 text-sm text-foreground',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30',
+        'h-full min-w-[5.25rem] max-w-[7rem] shrink-0 cursor-pointer appearance-none border-0 bg-transparent',
+        'px-2.5 text-sm font-medium leading-10 text-foreground',
+        'focus-visible:outline-none focus-visible:ring-0',
         className,
       )}
     >
