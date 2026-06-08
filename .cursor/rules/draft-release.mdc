@@ -1,11 +1,13 @@
 ---
-description: When the user asks to draft a release for OpenDir, use gh to create a draft GitHub release.
+description: When the user asks to draft a release for OpenDir, execute the full workflow yourself with gh — never hand it off to the user.
 alwaysApply: true
 ---
 
 # Draft OpenDir release
 
-When the user says **draft a release** (or similar), do the full release workflow and **always publish the draft with GitHub CLI (`gh`)** — do not stop at local packaging or tell the user to create the release manually unless `gh` authentication fails after retry.
+When the user says **draft a release** (or similar), **you** draft the release. Execute the full workflow end-to-end and create the draft on GitHub with **`gh`**. Do not respond with instructions for the user to run `gh`, `git push`, or the GitHub UI unless you have exhausted every available tool and retry and still cannot reach GitHub.
+
+**Never** treat “draft the release” as a documentation or handoff task. The expected outcome is a draft release existing on GitHub.
 
 ## Version bump
 
@@ -35,9 +37,11 @@ node scripts/package-release.mjs
 
 This produces `release/OpenDir-<version>.zip`.
 
-## Draft with gh (required)
+## Commit, push, draft with gh (required)
 
-Commit, push the working branch, then create a **draft** release:
+1. Commit and push the working branch (`git push -u origin <branch>`, retry with backoff on network errors).
+2. Delete any obsolete draft for the same or superseded tag if needed (`gh release delete … --yes`).
+3. Create the draft release:
 
 ```bash
 gh release create v<version> \
@@ -50,8 +54,6 @@ gh release create v<version> \
 
 Use `--draft` unless the user explicitly asks to publish.
 
-If a prior draft for the same tag exists, delete or update it with `gh release delete` / `gh release edit` as appropriate.
+## If GitHub access fails
 
-## On gh auth failure
-
-If `gh` returns 401, still commit and push all release changes, then tell the user `gh auth login` is required and provide the exact `gh release create` command to run locally.
+Retry push and `gh` (including re-auth paths available in the environment). Do **not** default to telling the user to do your job. Only after repeated failures, report what blocked you and continue attempting resolution in follow-up turns — still without substituting a “run this locally” checklist for completing the task.
