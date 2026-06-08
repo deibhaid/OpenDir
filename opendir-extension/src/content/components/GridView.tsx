@@ -1,6 +1,7 @@
 import { Download, Play } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
 import { formatDate, formatSize } from '../parser/format';
+import { getDisplayName } from '../lib/display';
 import { getCategoryStyle } from '../lib/category';
 import { FileTypeIcon } from './FileTypeIcon';
 import { triggerDownload } from '../lib/files';
@@ -79,9 +80,8 @@ function GridCard({ item }: { item: DirectoryItem }) {
 
       <div className="flex flex-1 flex-col gap-2 border-t p-4">
         <div className="flex items-start justify-between gap-2">
-          <a href={item.href} className="min-w-0 flex-1 truncate font-medium hover:underline" title={item.name}>
-            {item.name}
-            {item.ext && <span className="ml-1 text-xs text-muted-foreground">.{item.ext}</span>}
+          <a href={item.href} className="min-w-0 flex-1 truncate font-medium hover:underline" title={getDisplayName(item)}>
+            {getDisplayName(item)}
           </a>
           {item.type === 'file' && (
             <Button

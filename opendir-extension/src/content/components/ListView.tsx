@@ -1,7 +1,8 @@
 import { FileTypeIcon } from './FileTypeIcon';
 import { useOpenDir } from '../context/OpenDirContext';
+import { getDisplayName } from '../lib/display';
 import { formatDate, formatSize } from '../parser/format';
-import type { DirectoryItem, SortColumn } from '../types';
+import type { SortColumn } from '../types';
 import { cn } from '../lib/utils';
 
 function SortGlyph({ column }: { column: SortColumn }) {
@@ -46,66 +47,28 @@ function SortableHeader({
   );
 }
 
-function ListRow({ item }: { item: DirectoryItem }) {
-  const { selectedHrefs, toggleSelected } = useOpenDir();
-  const selected = selectedHrefs.has(item.href);
-
+function ListColumns() {
   return (
-    <tr
-      className={cn(
-        'border-b border-border/70 transition-colors hover:bg-muted/30',
-        selected && 'bg-primary/5',
-      )}
-    >
-      <td className="w-10 px-4 py-3">
-        <input
-          type="checkbox"
-          checked={selected}
-          onChange={() => toggleSelected(item.href)}
-          aria-label={`Select ${item.name}`}
-          className="h-4 w-4 rounded border-border"
-        />
-      </td>
-      <td className="px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <FileTypeIcon item={item} />
-          <a
-            href={item.href}
-            className="truncate text-foreground hover:underline"
-            title={item.name}
-          >
-            {item.name}
-          </a>
-        </div>
-      </td>
-      <td className="w-[100px] px-4 py-3 text-muted-foreground">
-        {item.type === 'directory' ? '-' : item.ext ?? '-'}
-      </td>
-      <td className="w-[180px] px-4 py-3 text-muted-foreground">
-        {formatDate(item.created ?? item.modified) === '—'
-          ? '-'
-          : formatDate(item.created ?? item.modified)}
-      </td>
-      <td className="w-[100px] px-4 py-3 text-right tabular-nums text-muted-foreground">
-        {item.type === 'directory'
-          ? '-'
-          : formatSize(item.size ?? item.sizeRaw) === '—'
-            ? '-'
-            : formatSize(item.size ?? item.sizeRaw)}
-      </td>
-    </tr>
+    <colgroup>
+      <col className="w-10" />
+      <col />
+      <col className="w-[100px]" />
+      <col className="w-[180px]" />
+      <col className="w-[100px]" />
+    </colgroup>
   );
 }
 
-export function ListViewContent() {
-  const { visibleItems, allVisibleSelected, toggleSelectAllVisible } = useOpenDir();
+export function ListViewHeader() {
+  const { allVisibleSelected, toggleSelectAllVisible } = useOpenDir();
 
   return (
-    <div className="px-1 pb-2 pt-1">
-      <table className="w-full border-collapse text-sm">
-        <thead className="sticky top-0 z-10 border-b border-border/80 bg-background/95 backdrop-blur">
+    <div className="shrink-0 border-b border-border/80 bg-background px-1">
+      <table className="w-full table-fixed text-sm">
+        <ListColumns />
+        <thead>
           <tr>
-            <th className="w-10 px-4 py-3">
+            <th className="px-4 py-3">
               <input
                 type="checkbox"
                 checked={allVisibleSelected}
@@ -117,23 +80,95 @@ export function ListViewContent() {
             <th className="px-4 py-3 text-left">
               <SortableHeader column="name" label="Name" />
             </th>
-            <th className="w-[100px] px-4 py-3 text-left">
+            <th className="px-4 py-3 text-left">
               <SortableHeader column="ext" label="Extension" />
             </th>
-            <th className="w-[180px] px-4 py-3 text-left">
+            <th className="px-4 py-3 text-left">
               <SortableHeader column="date" label="Date Created" />
             </th>
-            <th className="w-[100px] px-4 py-3">
+            <th className="px-4 py-3">
               <SortableHeader column="size" label="Size" align="right" />
             </th>
           </tr>
         </thead>
-        <tbody>
-          {visibleItems.map((item) => (
-            <ListRow key={item.href} item={item} />
-          ))}
-        </tbody>
       </table>
     </div>
+  );
+}
+
+function ListRow({ item }: { item: import('../types').DirectoryItem }) {
+  const { selectedHrefs, toggleSelected } = useOpenDir();
+  const selected = selectedHrefs.has(item.href);
+  const displayName = getDisplayName(item);
+
+  return (
+    <tr
+      className={cn(
+        'border-b border-border/70 transition-colors hover:bg-muted/30',
+        selected && 'bg-primary/5',
+      )}
+    >
+      <td className="px-4 py-3">
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => toggleSelected(item.href)}
+          aria-label={`Select ${displayName}`}
+          className="h-4 w-4 rounded border-border"
+        />
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <FileTypeIcon item={item} />
+          <a
+            href={item.href}
+            className="truncate text-foreground hover:underline"
+            title={displayName}
+          >
+            {displayName}
+          </a>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-muted-foreground">
+        {item.type === 'directory' ? '-' : item.ext ?? '-'}
+      </td>
+      <td className="px-4 py-3 text-muted-foreground">
+        {formatDate(item.created ?? item.modified) === '—'
+          ? '-'
+          : formatDate(item.created ?? item.modified)}
+      </td>
+      <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
+        {item.type === 'directory'
+          ? '-'
+          : formatSize(item.size ?? item.sizeRaw) === '—'
+            ? '-'
+            : formatSize(item.size ?? item.sizeRaw)}
+      </td>
+    </tr>
+  );
+}
+
+export function ListViewBody() {
+  const { visibleItems } = useOpenDir();
+
+  return (
+    <table className="w-full table-fixed text-sm">
+      <ListColumns />
+      <tbody>
+        {visibleItems.map((item) => (
+          <ListRow key={item.href} item={item} />
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+/** @deprecated Use ListViewHeader + ListViewBody in FileBrowser */
+export function ListViewContent() {
+  return (
+    <>
+      <ListViewHeader />
+      <ListViewBody />
+    </>
   );
 }
