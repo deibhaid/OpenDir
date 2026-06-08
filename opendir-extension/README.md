@@ -49,7 +49,7 @@ The build output is written to `dist/`.
 
 ## Releases
 
-Stable releases are tagged `v1.0.0`, etc. See [GitHub Releases](https://github.com/deibhaid/deibhaid/releases) for packaged `dist/` zips.
+Stable releases are tagged `v1.0.0`, etc. See [GitHub Releases](https://github.com/deibhaid/OpenDir/releases) for packaged `dist/` zips.
 
 Current version: **1.0.0**
 

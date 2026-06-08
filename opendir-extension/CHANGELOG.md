@@ -32,4 +32,4 @@ First stable release. Clean-room Chrome MV3 extension by David W. Bryson.
 
 - Build, typecheck, and 15 unit tests passing
 
-[1.0.0]: https://github.com/deibhaid/deibhaid/releases/tag/v1.0.0
+[1.0.0]: https://github.com/deibhaid/OpenDir/releases/tag/v1.0.0

@@ -16,9 +16,11 @@ Load `opendir-extension/dist/` in Chrome via **Load unpacked** (`chrome://extens
 
 See [`opendir-extension/README.md`](opendir-extension/README.md) for full documentation.
 
+Repository: https://github.com/deibhaid/OpenDir
+
 ## Releases
 
-**Latest stable:** [v1.0.0](https://github.com/deibhaid/deibhaid/releases/tag/v1.0.0)
+**Latest stable:** [v1.0.0](https://github.com/deibhaid/OpenDir/releases/tag/v1.0.0)
 
 Download the release zip or build from source. The extension displays as **OpenDir** in Chrome.
 
