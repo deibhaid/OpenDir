@@ -3,7 +3,7 @@ import { useOpenDir } from '../context/OpenDirContext';
 import { ALL_EXTENSIONS_FILTER } from '../types';
 import { cn } from '../lib/utils';
 
-const MIN_FILTER_FIELD_CHARS = 5;
+const MIN_FILTER_FIELD_CHARS = 7;
 
 export function ExtensionFilterSelect({ className }: { className?: string }) {
   const { extensionFilter, setExtensionFilter, directoryExtensions } = useOpenDir();
