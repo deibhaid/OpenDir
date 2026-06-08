@@ -1,4 +1,4 @@
-# OpenDir 0.0.3
+# OpenDir 0.0.4
 
 **Author:** David W. Bryson  
 **Type:** Chrome Manifest V3 extension (unpacked load)
@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **OpenDir-0.0.3.zip** from this release (or build from source).
+1. Download **OpenDir-0.0.4.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -24,8 +24,8 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 
 ## Highlights
 
-- Compact extension filter in the search bar (`*.*`, `*.ext`) — sized to the selected label
-- Search, bulk-download actions, and grid/list toggles share one stable toolbar row
+- Extension filter in the search bar — compact 7-character field with centered `*.*` / `*.ext` label
+- Search, bulk-download actions, and grid/list toggles share one stable toolbar row (no jump on select)
 - OpenDir runs only on open HTTP(S) directory listings
 - Settings gear opens three-column panel (Theme | Thumbnails | Multi-file download)
 - Full filenames when servers truncate directory link text
@@ -43,7 +43,7 @@ When drafting a new release, bump the version automatically:
 
 Each segment is single-digit (0–9). Increment patch; at patch 9 roll to minor; at minor 9 roll to major.
 
-**Canonical version:** `opendir-extension/package.json`. `manifest.json` and `dist/manifest.json` are synced from it on every build so Chrome shows the same version as the GitHub release tag (`v0.0.3` → `"version": "0.0.3"`).
+**Canonical version:** `opendir-extension/package.json`. `manifest.json` and `dist/manifest.json` are synced from it on every build so Chrome shows the same version as the GitHub release tag (`v0.0.4` → `"version": "0.0.4"`).
 
 ```bash
 cd opendir-extension

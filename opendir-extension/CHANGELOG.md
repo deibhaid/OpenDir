@@ -2,6 +2,19 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.4] — 2026-06-08
+
+### Changed
+
+- Extension filter field uses a 7-character minimum width with centered label text
+- Search toolbar keeps grid/list toggles fixed on the right when bulk-download controls appear
+
+### Verified
+
+- Build, typecheck, and 26 unit tests passing
+
+[0.0.4]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.4
+
 ## [0.0.3] — 2026-06-08
 
 ### Changed
