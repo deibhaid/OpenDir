@@ -39,6 +39,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
+      preserveEntrySignatures: 'exports-only',
       input: {
         'service-worker': resolve(__dirname, 'src/background/service-worker.ts'),
         loader: resolve(__dirname, 'src/content/loader.ts'),
@@ -46,6 +47,7 @@ export default defineConfig({
         'file-access-help': resolve(__dirname, 'src/pages/file-access-help.ts'),
       },
       output: {
+        format: 'es',
         entryFileNames: '[name].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
