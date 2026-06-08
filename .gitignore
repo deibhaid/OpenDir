@@ -1,3 +1,6 @@
 # Release artifacts
 *.zip
 release/
+
+# lTerm2 / WezTerm build output
+lterm2/target/

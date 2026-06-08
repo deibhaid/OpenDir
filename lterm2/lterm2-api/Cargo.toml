@@ -1,0 +1,28 @@
+[package]
+name = "lterm2-api"
+version = "0.1.0"
+edition = "2021"
+description = "iTerm2-compatible Python API server for lTerm2"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+config.workspace = true
+flume.workspace = true
+futures-util.workspace = true
+log.workspace = true
+mux.workspace = true
+parking_lot.workspace = true
+promise.workspace = true
+prost.workspace = true
+prost-types.workspace = true
+rand.workspace = true
+sha1.workspace = true
+tokio.workspace = true
+tokio-tungstenite.workspace = true
+tungstenite.workspace = true
+wezterm-term.workspace = true
+
+[build-dependencies]
+prost-build.workspace = true
