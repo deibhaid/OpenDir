@@ -4,9 +4,21 @@ import { ExtensionFilterSelect } from './ExtensionFilterSelect';
 import { SettingsDropdown } from './SettingsDropdown';
 import { useOpenDir } from '../context/OpenDirContext';
 import { Button } from './ui/Button';
+import { cn } from '../lib/utils';
 
 export function AppHeader() {
-  const { search, setSearch, view, setView } = useOpenDir();
+  const {
+    search,
+    setSearch,
+    view,
+    setView,
+    selectedHrefs,
+    clearSelection,
+    downloadSelected,
+  } = useOpenDir();
+
+  const selectionCount = selectedHrefs.size;
+  const hasSelection = selectionCount > 0;
 
   return (
     <header className="sticky top-0 z-10 flex flex-col gap-4 border-b border-border/70 bg-background/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
@@ -19,7 +31,24 @@ export function AppHeader() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div
+        className={cn(
+          'flex items-center gap-2',
+          hasSelection && 'rounded-lg bg-muted/30 px-2 py-1.5',
+        )}
+      >
+        {hasSelection && (
+          <div className="flex shrink-0 items-center gap-3 pr-1 text-sm">
+            <span className="whitespace-nowrap">{selectionCount} selected</span>
+            <Button size="sm" onClick={downloadSelected}>
+              Download selected
+            </Button>
+            <Button size="sm" variant="ghost" onClick={clearSelection}>
+              Clear
+            </Button>
+          </div>
+        )}
+
         <div className="relative min-w-0 flex-1">
           <div className="flex h-10 items-stretch overflow-hidden rounded-lg border border-border/80 bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/30">
             <input
@@ -47,7 +76,7 @@ export function AppHeader() {
           </div>
         </div>
 
-        <div className="flex gap-1">
+        <div className="flex shrink-0 gap-1">
           <Button
             variant={view === 'grid' ? 'toolbarActive' : 'toolbar'}
             size="icon"

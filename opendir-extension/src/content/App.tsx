@@ -1,7 +1,6 @@
 import { AppHeader } from './components/AppHeader';
 import { FileBrowser } from './components/FileBrowser';
 import { PreviewModal } from './components/PreviewModal';
-import { SelectionBar } from './components/SelectionBar';
 import { OpenDirProvider } from './context/OpenDirContext';
 import type { DirectoryItem } from './types';
 
@@ -10,7 +9,6 @@ function AppShell({ initialItems }: { initialItems: DirectoryItem[] }) {
     <OpenDirProvider initialItems={initialItems}>
       <div className="flex h-full flex-col">
         <AppHeader />
-        <SelectionBar />
         <FileBrowser />
         <PreviewModal />
       </div>
