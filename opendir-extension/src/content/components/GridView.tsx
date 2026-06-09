@@ -86,14 +86,23 @@ function GridCard({ item }: { item: DirectoryItem }) {
             </Button>
           )}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="space-y-0.5 text-xs text-muted-foreground">
           <div>
             <span className="font-medium text-foreground/80">Size:</span>{' '}
-            {formatSize(item.size ?? item.sizeRaw)}
+            {item.type === 'directory'
+              ? '-'
+              : formatSize(item.size ?? item.sizeRaw) === '—'
+                ? '-'
+                : formatSize(item.size ?? item.sizeRaw)}
+          </div>
+          <div className="whitespace-nowrap">
+            <span className="font-medium text-foreground/80">Modified:</span>{' '}
+            {formatDate(item.modified ?? item.created) === '—'
+              ? '-'
+              : formatDate(item.modified ?? item.created)}
           </div>
           <div>
-            <span className="font-medium text-foreground/80">Modified:</span>{' '}
-            {formatDate(item.modified ?? item.created)}
+            <span className="font-medium text-foreground/80">Type:</span> {style.label}
           </div>
         </div>
       </div>
