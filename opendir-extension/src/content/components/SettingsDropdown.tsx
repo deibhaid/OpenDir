@@ -14,6 +14,19 @@ const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
   { value: 'system', label: 'System' },
 ];
 
+function SettingsCheckboxIndicator({ checked }: { checked: boolean }) {
+  return (
+    <span
+      className={cn(
+        'flex h-3.5 w-3.5 items-center justify-center rounded border border-border bg-background',
+        checked && 'border-primary bg-primary text-primary-foreground',
+      )}
+    >
+      {checked ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+    </span>
+  );
+}
+
 export function SettingsDropdown() {
   const {
     theme,
@@ -141,9 +154,7 @@ export function SettingsDropdown() {
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                  <DropdownMenu.ItemIndicator>
-                    <Check className="h-3.5 w-3.5" />
-                  </DropdownMenu.ItemIndicator>
+                  <SettingsCheckboxIndicator checked={thumbnails.enabled} />
                 </span>
                 Thumbnails
               </DropdownMenu.CheckboxItem>
@@ -159,9 +170,7 @@ export function SettingsDropdown() {
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                  <DropdownMenu.ItemIndicator>
-                    <Check className="h-3.5 w-3.5" />
-                  </DropdownMenu.ItemIndicator>
+                  <SettingsCheckboxIndicator checked={thumbnails.enabled && thumbnails.images} />
                 </span>
                 Images
               </DropdownMenu.CheckboxItem>
@@ -176,9 +185,7 @@ export function SettingsDropdown() {
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                  <DropdownMenu.ItemIndicator>
-                    <Check className="h-3.5 w-3.5" />
-                  </DropdownMenu.ItemIndicator>
+                  <SettingsCheckboxIndicator checked={thumbnails.enabled && thumbnails.videos} />
                 </span>
                 Videos
               </DropdownMenu.CheckboxItem>
@@ -193,9 +200,7 @@ export function SettingsDropdown() {
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                  <DropdownMenu.ItemIndicator>
-                    <Check className="h-3.5 w-3.5" />
-                  </DropdownMenu.ItemIndicator>
+                  <SettingsCheckboxIndicator checked={thumbnails.enabled && thumbnails.text} />
                 </span>
                 Documents
               </DropdownMenu.CheckboxItem>

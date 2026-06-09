@@ -44,6 +44,12 @@ export interface ThumbnailSettings {
   text: boolean;
 }
 
+export function thumbnailsActive(thumbnails: ThumbnailSettings): boolean {
+  return (
+    thumbnails.enabled && (thumbnails.images || thumbnails.videos || thumbnails.text)
+  );
+}
+
 export interface OpenDirSettings {
   theme: ThemeMode;
   font: FontFamily;

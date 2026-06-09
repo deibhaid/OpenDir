@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import type { DirectoryItem, ThumbnailSettings } from '../types';
+import { thumbnailsActive } from '../types';
 import { isTextPreviewItem } from '../lib/preview';
 import { cn } from '../lib/utils';
 import { FileTypeIcon } from './FileTypeIcon';
@@ -15,6 +16,10 @@ interface ItemThumbnailProps {
   textVariant?: TextSnippetVariant;
 }
 
+function EmptyThumbnailSlot({ className }: { className?: string }) {
+  return <span className={cn('shrink-0', className ?? 'h-5 w-5')} aria-hidden />;
+}
+
 export function ItemThumbnail({
   item,
   thumbnails,
@@ -27,16 +32,8 @@ export function ItemThumbnail({
   const [videoFailed, setVideoFailed] = useState(false);
   const boxClass = cn('shrink-0', className ?? 'h-5 w-5');
 
-  if (item.isParent) {
-    return <span className={boxClass} aria-hidden />;
-  }
-
-  if (!thumbnails.enabled) {
-    return (
-      <span className={cn('flex items-center justify-center', boxClass)}>
-        <FileTypeIcon item={item} className={iconClassName ?? 'h-5 w-5'} />
-      </span>
-    );
+  if (item.isParent || !thumbnailsActive(thumbnails)) {
+    return <EmptyThumbnailSlot className={className} />;
   }
 
   if (item.fileType === 'image' && thumbnails.images && !imageFailed) {
@@ -82,9 +79,5 @@ export function ItemThumbnail({
     );
   }
 
-  return (
-    <span className={cn('flex items-center justify-center', boxClass)}>
-      <FileTypeIcon item={item} className={iconClassName ?? 'h-5 w-5'} />
-    </span>
-  );
+  return <EmptyThumbnailSlot className={className} />;
 }

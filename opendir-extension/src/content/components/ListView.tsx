@@ -3,6 +3,7 @@ import { ItemThumbnail } from './ItemThumbnail';
 import { useOpenDir } from '../context/OpenDirContext';
 import { getDisplayName } from '../lib/display';
 import { isPreviewableItem } from '../lib/preview';
+import { thumbnailsActive } from '../types';
 import { formatDate, formatSize } from '../parser/format';
 import type { SortColumn } from '../types';
 import { cn } from '../lib/utils';
@@ -130,27 +131,29 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
       </td>
       <td className="px-4 py-3">
         <div className="flex min-w-0 items-start gap-2.5">
-          <button
-            type="button"
-            className={cn(
-              'mt-0.5 shrink-0 rounded',
-              opensPreview ? 'cursor-pointer hover:opacity-90' : 'cursor-default',
-            )}
-            disabled={!opensPreview}
-            onClick={() => {
-              if (opensPreview) setSelectedItem(item);
-            }}
-            aria-label={opensPreview ? `Preview ${displayName}` : undefined}
-          >
-            <ItemThumbnail
-              item={item}
-              thumbnails={thumbnails}
-              className="h-10 w-10"
-              iconClassName="h-5 w-5"
-              showVideoPlayOverlay
-              textVariant="compact"
-            />
-          </button>
+          {thumbnailsActive(thumbnails) ? (
+            <button
+              type="button"
+              className={cn(
+                'mt-0.5 shrink-0 rounded',
+                opensPreview ? 'cursor-pointer hover:opacity-90' : 'cursor-default',
+              )}
+              disabled={!opensPreview}
+              onClick={() => {
+                if (opensPreview) setSelectedItem(item);
+              }}
+              aria-label={opensPreview ? `Preview ${displayName}` : undefined}
+            >
+              <ItemThumbnail
+                item={item}
+                thumbnails={thumbnails}
+                className="h-10 w-10"
+                iconClassName="h-5 w-5"
+                showVideoPlayOverlay
+                textVariant="compact"
+              />
+            </button>
+          ) : null}
           <a
             href={item.href}
             className="min-w-0 flex-1 break-words text-foreground hover:underline"
