@@ -3,6 +3,12 @@
  * Keep detection logic in sync with src/shared/directoryIndex.ts
  */
 (function openDirLoader() {
+  const root = document.documentElement;
+  if (root.dataset.openDirLoader === '1' || root.dataset.openDirActive === '1') {
+    return;
+  }
+  root.dataset.openDirLoader = '1';
+
   function detectDirectoryIndex(doc: Document): boolean {
     const titleMatch = /^index of(\s|\/|$)/i.test(doc.title.trim());
     const h1 = doc.querySelector('h1');

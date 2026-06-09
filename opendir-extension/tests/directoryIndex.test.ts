@@ -65,4 +65,21 @@ describe('detectDirectoryIndex', () => {
   it('rejects empty pages', () => {
     expect(detectDirectoryIndex(doc('<html><body><p>Hello</p></body></html>'))).toBe(false);
   });
+
+  it('detects rainbowda.sh-style table listings from title and headers', () => {
+    const html = `
+      <html><head><title>Index of /movies/28 Years Later The Bone Temple (2026)/</title></head>
+      <body><h1>Index of /movies/28 Years Later The Bone Temple (2026)/</h1>
+      <table>
+        <tr><th>File Name</th><th>File Size</th><th>Date</th></tr>
+        <tr><td><a href="../">Parent directory/</a></td><td>-</td><td>-</td></tr>
+        <tr><td><a href="movie.mkv">movie.mkv</a></td><td>6.6 GiB</td><td>2026-Apr-19</td></tr>
+      </table></body></html>
+    `;
+    expect(
+      detectDirectoryIndex(
+        doc(html, 'https://downloads.rainbowda.sh/movies/28%20Years%20Later%20The%20Bone%20Temple%20%282026%29/'),
+      ),
+    ).toBe(true);
+  });
 });

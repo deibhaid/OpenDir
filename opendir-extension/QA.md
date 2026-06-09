@@ -17,7 +17,7 @@ Use this checklist after loading `dist/` in `chrome://extensions`.
 
 - [ ] Loader + CSS injected by service worker
 - [ ] React app mounts full viewport after clearing original page DOM
-- [ ] Injected tab+URL tracked; cleared when tab closes
+- [ ] Loader ignores duplicate injection attempts on the same page load
 
 ## 3. Parsing
 

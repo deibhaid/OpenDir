@@ -1,7 +1,7 @@
 # OpenDir — Product Specification
 
 **Author:** David W. Bryson  
-**Version:** 0.1.1  
+**Version:** 0.1.2  
 **Type:** Chrome Manifest V3 Extension
 
 OpenDir replaces bare Apache/nginx directory index pages and enhances local `file://` directory browsing with search, filters, previews, and batch downloads.
@@ -22,8 +22,8 @@ OpenDir replaces bare Apache/nginx directory index pages and enhances local `fil
 - On HTTP/HTTPS page load (`tabs.onUpdated`, status `complete`): auto-inject when the page looks like a directory index **without** user clicking.
 - Skip auto-inject if OpenDir is already active (`document.documentElement.dataset.openDirActive = "1"`).
 - Skip auto-inject if the user disabled OpenDir for that page in the current browser session.
-- Track injected tab+URL in service worker; clear on tab navigation start and tab close.
-- Do not double-inject the same tab+URL within a single page load.
+- Skip auto-inject when OpenDir is already active on the page.
+- The loader guards against duplicate injection within the same document load.
 
 ### Directory index detection heuristics
 A page is treated as a directory index when **any** of:
@@ -199,7 +199,7 @@ Capture data **before** DOM is cleared.
 
 ## 15. Manifest
 
-- name: OpenDir, author: David W. Bryson, version: 0.1.1
+- name: OpenDir, author: David W. Bryson, version: 0.1.2
 - permissions: `activeTab`, `scripting`, `storage`
 - host_permissions: `http://*/*`, `https://*/*`
 - background service worker module
