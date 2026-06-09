@@ -1,6 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { getDisplayName } from '../src/content/lib/display';
+import { getCurrentDirectoryLabel, getDisplayName, getOpenDirTabTitle } from '../src/content/lib/display';
 import type { DirectoryItem } from '../src/content/types';
+
+describe('getCurrentDirectoryLabel', () => {
+  it('uses the last path segment', () => {
+    expect(getCurrentDirectoryLabel('https://example.com/music/jazz/')).toBe('jazz');
+  });
+
+  it('decodes URI-encoded segments', () => {
+    expect(getCurrentDirectoryLabel('https://example.com/foo%20bar/')).toBe('foo bar');
+  });
+
+  it('uses / for the site root', () => {
+    expect(getCurrentDirectoryLabel('https://example.com/')).toBe('/');
+  });
+});
+
+describe('getOpenDirTabTitle', () => {
+  it('prefixes the current directory with OD:', () => {
+    expect(getOpenDirTabTitle('https://example.com/repos/OpenDir/')).toBe('OD: OpenDir');
+  });
+});
 
 describe('getDisplayName', () => {
   it('strips extension from file names when ext is known', () => {

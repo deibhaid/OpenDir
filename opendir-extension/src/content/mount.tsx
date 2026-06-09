@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import { getOpenDirTabTitle } from './lib/display';
 import { parseDirectoryListing } from './parser';
 import { detectDirectoryIndex } from '../shared/directoryIndex';
 import './main.css';
@@ -22,7 +23,10 @@ export function mountOpenDir({ perf }: ExecuteOptions): void {
   const items = parseDirectoryListing(document);
 
   document.documentElement.dataset.openDirActive = '1';
-  document.head.innerHTML = '<meta charset="utf-8"><title>OpenDir</title>';
+  document.head.innerHTML = '<meta charset="utf-8">';
+  const titleElement = document.createElement('title');
+  titleElement.textContent = getOpenDirTabTitle();
+  document.head.appendChild(titleElement);
   document.body.innerHTML = '';
   document.body.style.margin = '0';
 
