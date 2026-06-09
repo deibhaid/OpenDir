@@ -75,18 +75,16 @@ export function TextSnippetThumbnail({
   return (
     <div
       className={cn(
-        'flex h-full w-full flex-col overflow-hidden rounded border border-border/70 bg-card shadow-sm',
-        isCompact ? 'p-1' : 'p-2',
+        'h-full w-full overflow-hidden rounded border border-border/70 bg-background shadow-sm',
+        isCompact ? 'p-0.5' : 'p-1.5',
         className,
       )}
       title={snippet}
     >
       <pre
         className={cn(
-          'flex-1 overflow-hidden whitespace-pre-wrap break-all text-left font-mono text-foreground',
-          isCompact
-            ? 'line-clamp-5 text-[6px] leading-[1.1]'
-            : 'line-clamp-[12] text-[9px] leading-tight',
+          'h-full w-full overflow-hidden text-left font-mono text-foreground whitespace-pre',
+          isCompact ? 'text-[5px] leading-[1.05]' : 'text-[8px] leading-[1.15]',
         )}
       >
         {snippet || '(empty)'}
