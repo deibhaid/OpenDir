@@ -98,6 +98,7 @@ export function OpenDirProvider({
   const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({
     images: false,
     videos: false,
+    text: true,
   });
   const [extensionFilter, setExtensionFilter] = useState<string>(ALL_EXTENSIONS_FILTER);
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');

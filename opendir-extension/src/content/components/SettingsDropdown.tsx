@@ -134,6 +134,21 @@ export function SettingsDropdown() {
                 </span>
                 Videos
               </DropdownMenu.CheckboxItem>
+              <DropdownMenu.CheckboxItem
+                checked={thumbnails.text}
+                onCheckedChange={(checked) =>
+                  setThumbnails({ ...thumbnails, text: checked === true })
+                }
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <DropdownMenu.ItemIndicator>
+                    <Check className="h-3.5 w-3.5" />
+                  </DropdownMenu.ItemIndicator>
+                </span>
+                Documents
+              </DropdownMenu.CheckboxItem>
             </div>
 
             {/* Column 4 — Multi-file download */}

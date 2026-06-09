@@ -34,7 +34,10 @@ export async function loadSettings(): Promise<OpenDirSettings> {
       ? stored[STORAGE_KEYS.font]
       : DEFAULT_SETTINGS.font,
     view: (stored[STORAGE_KEYS.view] as ViewMode) ?? DEFAULT_SETTINGS.view,
-    thumbnails: (stored[STORAGE_KEYS.thumbnails] as ThumbnailSettings) ?? DEFAULT_SETTINGS.thumbnails,
+    thumbnails: {
+      ...DEFAULT_SETTINGS.thumbnails,
+      ...((stored[STORAGE_KEYS.thumbnails] as ThumbnailSettings | undefined) ?? {}),
+    },
     downloadDelayMs: (stored[STORAGE_KEYS.downloadDelayMs] as number) ?? DEFAULT_SETTINGS.downloadDelayMs,
     downloadRandom: (stored[STORAGE_KEYS.downloadRandom] as boolean) ?? DEFAULT_SETTINGS.downloadRandom,
     sortColumn: (stored[STORAGE_KEYS.sortColumn] as SortColumn) ?? DEFAULT_SETTINGS.sortColumn,

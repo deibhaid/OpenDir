@@ -148,6 +148,7 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
               className="h-10 w-10"
               iconClassName="h-5 w-5"
               showVideoPlayOverlay
+              textVariant="compact"
             />
           </button>
           <a

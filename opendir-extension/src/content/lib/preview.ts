@@ -46,6 +46,17 @@ export function isPreviewableItem(item: DirectoryItem): boolean {
   return isTextPreviewExtension(item.ext);
 }
 
+/** Strip markup and collapse whitespace for compact thumbnail snippets. */
+export function formatTextSnippet(raw: string): string {
+  const withoutTags = raw.replace(/<[^>]*>/g, ' ');
+  const lines = withoutTags
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const collapsed = lines.join('\n').replace(/[ \t]{2,}/g, ' ').trim();
+  return collapsed || raw.trim();
+}
+
 export async function fetchTextPreview(
   href: string,
   maxBytes = MAX_TEXT_PREVIEW_BYTES,

@@ -4,7 +4,7 @@ import type { DirectoryItem, ThumbnailSettings } from '../types';
 import { isTextPreviewItem } from '../lib/preview';
 import { cn } from '../lib/utils';
 import { FileTypeIcon } from './FileTypeIcon';
-import { TextSnippetThumbnail } from './TextSnippetThumbnail';
+import { TextSnippetThumbnail, type TextSnippetVariant } from './TextSnippetThumbnail';
 
 interface ItemThumbnailProps {
   item: DirectoryItem;
@@ -12,6 +12,7 @@ interface ItemThumbnailProps {
   className?: string;
   iconClassName?: string;
   showVideoPlayOverlay?: boolean;
+  textVariant?: TextSnippetVariant;
 }
 
 export function ItemThumbnail({
@@ -20,6 +21,7 @@ export function ItemThumbnail({
   className,
   iconClassName,
   showVideoPlayOverlay = false,
+  textVariant = 'card',
 }: ItemThumbnailProps) {
   const [imageFailed, setImageFailed] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -41,12 +43,13 @@ export function ItemThumbnail({
     );
   }
 
-  if (isTextPreviewItem(item)) {
+  if (thumbnails.text && isTextPreviewItem(item)) {
     return (
       <TextSnippetThumbnail
         item={item}
         className={boxClass}
         iconClassName={iconClassName}
+        variant={textVariant}
       />
     );
   }
