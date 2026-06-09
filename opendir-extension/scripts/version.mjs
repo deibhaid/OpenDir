@@ -1,10 +1,10 @@
 /**
- * OpenDir version bump (single-digit semver segments).
+ * OpenDir version bump (standard semver patch increment).
  *
- * Rule when drafting a new release:
- * - Increment patch: 0.0.1 -> 0.0.2
- * - Patch max 9, then minor +1: 0.0.9 -> 0.1.0
- * - Minor max 9, then major +1: 0.9.9 -> 1.0.0
+ * Each run increments only the patch segment by 1:
+ * 0.1.8 -> 0.1.9 -> 0.1.10 -> 0.1.11
+ *
+ * Run `npm run version:bump` once per release commit (before build).
  */
 
 export function bumpVersion(current) {
@@ -13,16 +13,6 @@ export function bumpVersion(current) {
     throw new Error(`Invalid version: ${current}`);
   }
 
-  let [major, minor, patch] = parts;
-  patch += 1;
-  if (patch > 9) {
-    patch = 0;
-    minor += 1;
-  }
-  if (minor > 9) {
-    minor = 0;
-    major += 1;
-  }
-
-  return `${major}.${minor}.${patch}`;
+  const [major, minor, patch] = parts;
+  return `${major}.${minor}.${patch + 1}`;
 }

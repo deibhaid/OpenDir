@@ -60,3 +60,9 @@ npm run dev
 ```
 
 Rebuild and reload the unpacked extension after changes.
+
+### Version bumps
+
+- `package.json` is the canonical version; `npm run build` syncs it to `manifest.json`.
+- Run `npm run version:bump` **once** per release commit (increments patch only: `0.1.9` → `0.1.10`).
+- Do not run `version:bump` twice before committing — that skips version numbers.

@@ -43,6 +43,7 @@ function updatePackageLock(oldVersion, newVersion) {
   writeFileSync(path, content);
 }
 
+// Run once per release commit: npm run version:bump
 const pkg = JSON.parse(readFileSync(resolve(extRoot, 'package.json'), 'utf8'));
 const oldVersion = pkg.version;
 const newVersion = bumpVersion(oldVersion);

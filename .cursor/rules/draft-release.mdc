@@ -11,17 +11,16 @@ When the user says **draft a release** (or similar), **you** draft the release. 
 
 ## Version bump
 
-Read `opendir-extension/package.json`, then bump using the single-digit rule in `opendir-extension/scripts/version.mjs`:
+Read `opendir-extension/package.json`, then bump using the patch rule in `opendir-extension/scripts/version.mjs`:
 
-- Increment patch: `0.0.1` → `0.0.2`
-- Patch max 9 → next minor: `0.0.9` → `0.1.0`
-- Minor max 9 → next major: `0.9.9` → `1.0.0`
+- Increment **only** the patch segment by 1: `0.1.8` → `0.1.9` → `0.1.10`
+- Run `version:bump` **once per release commit** — never twice in the same commit or push
 
 Run:
 
 ```bash
 cd opendir-extension
-node scripts/bump-version.mjs
+npm run version:bump
 ```
 
 `package.json` is the canonical version. `bump-version.mjs` updates it and syncs `manifest.json` so Chrome and the GitHub tag (`v0.0.2`) always match. Every `npm run build` re-syncs manifest from package.json and writes that version into `dist/manifest.json`.
