@@ -95,7 +95,11 @@ export function FileTypeIcon({
 }) {
   const iconClass = cn('h-5 w-5 shrink-0', className);
 
-  if (item.type === 'directory' || item.isParent) {
+  if (item.isParent) {
+    return null;
+  }
+
+  if (item.type === 'directory') {
     return <FolderIcon className={cn(iconClass, COLOR_MAP.folder)} />;
   }
 
