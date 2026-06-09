@@ -98,7 +98,7 @@ export function ListViewHeader() {
   );
 }
 
-function ListRow({ item, stickyParent = false }: { item: import('../types').DirectoryItem; stickyParent?: boolean }) {
+function ListRow({ item }: { item: import('../types').DirectoryItem }) {
   const { selectedHrefs, selectItem, setSelectedItem, thumbnails, extensionFilter } = useOpenDir();
   const opensPreview = isPreviewableItem(item);
   const selected = selectedHrefs.has(item.href);
@@ -110,7 +110,6 @@ function ListRow({ item, stickyParent = false }: { item: import('../types').Dire
       className={cn(
         'border-b border-border/70 transition-colors hover:bg-muted/30',
         selected && 'bg-primary/5',
-        stickyParent && 'bg-background',
       )}
     >
       <td className="px-4 py-3">
@@ -188,33 +187,14 @@ function ListRow({ item, stickyParent = false }: { item: import('../types').Dire
   );
 }
 
-export function ListViewParentRow() {
-  const { visibleItems } = useOpenDir();
-  const parent = visibleItems.find((item) => item.isParent);
-  if (!parent) return null;
-
-  return (
-    <div className="shrink-0 border-b border-border/80 bg-background px-1">
-      <table className="w-full table-fixed text-sm">
-        <ListColumns />
-        <tbody>
-          <ListRow item={parent} stickyParent />
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 export function ListViewBody() {
   const { visibleItems } = useOpenDir();
-  const rows = visibleItems.filter((item) => !item.isParent);
-  if (rows.length === 0) return null;
 
   return (
     <table className="w-full table-fixed text-sm">
       <ListColumns />
       <tbody>
-        {rows.map((item) => (
+        {visibleItems.map((item) => (
           <ListRow key={item.href} item={item} />
         ))}
       </tbody>
@@ -222,12 +202,11 @@ export function ListViewBody() {
   );
 }
 
-/** @deprecated Use ListViewHeader + ListViewParentRow + ListViewBody in FileBrowser */
+/** @deprecated Use ListViewHeader + ListViewBody in FileBrowser */
 export function ListViewContent() {
   return (
     <>
       <ListViewHeader />
-      <ListViewParentRow />
       <ListViewBody />
     </>
   );

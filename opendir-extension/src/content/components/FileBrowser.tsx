@@ -2,7 +2,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useOpenDir } from '../context/OpenDirContext';
 import { EmptyState, GridSkeletonCards, ListSkeletonRows } from './EmptyState';
 import { GridViewContent } from './GridView';
-import { ListViewBody, ListViewHeader, ListViewParentRow } from './ListView';
+import { ListViewBody, ListViewHeader } from './ListView';
 
 export function FileBrowser() {
   const {
@@ -41,7 +41,6 @@ export function FileBrowser() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <ListViewHeader />
-      <ListViewParentRow />
       <div id="scrollableDiv" className="min-h-0 flex-1 overflow-y-auto px-1">
         <InfiniteScroll
           dataLength={visibleItems.length}
