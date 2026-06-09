@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchTextPreview, formatTextSnippet } from '../lib/preview';
+import { fetchTextPreview } from '../lib/preview';
 import type { DirectoryItem } from '../types';
 import { cn } from '../lib/utils';
 import { FileTypeIcon } from './FileTypeIcon';
@@ -39,10 +39,8 @@ export function TextSnippetThumbnail({
         setFailed(true);
         return;
       }
-      const formatted = formatTextSnippet(result.text);
-      setSnippet(
-        formatted.length > maxChars ? `${formatted.slice(0, maxChars)}…` : formatted,
-      );
+      const raw = result.text.trim();
+      setSnippet(raw.length > maxChars ? `${raw.slice(0, maxChars)}…` : raw);
     });
 
     return () => {
@@ -85,10 +83,10 @@ export function TextSnippetThumbnail({
     >
       <pre
         className={cn(
-          'flex-1 overflow-hidden whitespace-pre-wrap break-words text-left font-mono text-foreground/80',
+          'flex-1 overflow-hidden whitespace-pre-wrap break-all text-left font-mono text-foreground',
           isCompact
-            ? 'line-clamp-4 text-[7px] leading-[1.15]'
-            : 'line-clamp-[10] text-[10px] leading-snug',
+            ? 'line-clamp-5 text-[6px] leading-[1.1]'
+            : 'line-clamp-[12] text-[9px] leading-tight',
         )}
       >
         {snippet || '(empty)'}

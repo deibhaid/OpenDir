@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import type { DirectoryItem } from '../src/content/types';
 import {
   fetchTextPreview,
-  formatTextSnippet,
   isPreviewableItem,
   isTextPreviewExtension,
 } from '../src/content/lib/preview';
@@ -32,16 +31,6 @@ describe('text preview helpers', () => {
     expect(isPreviewableItem(fileItem('js', 'code'))).toBe(true);
     expect(isPreviewableItem(fileItem('mkv', 'video'))).toBe(true);
     expect(isPreviewableItem(fileItem('pdf', 'document'))).toBe(false);
-  });
-});
-
-describe('formatTextSnippet', () => {
-  it('strips tags and blank lines from nfo-style content', () => {
-    const raw = `<movie>
-<title>Example</title>
-<plot>A survivor story.</plot>
-</movie>`;
-    expect(formatTextSnippet(raw)).toBe('Example\nA survivor story.');
   });
 });
 
