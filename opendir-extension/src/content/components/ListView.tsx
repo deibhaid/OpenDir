@@ -111,18 +111,20 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
       )}
     >
       <td className="px-4 py-3">
-        <input
-          type="checkbox"
-          checked={selected}
-          onMouseDown={(event) => {
-            shiftClickRef.current = event.shiftKey;
-          }}
-          onChange={() => {
-            selectItem(item.href, { shiftKey: shiftClickRef.current });
-          }}
-          aria-label={`Select ${displayName}`}
-          className="h-4 w-4 cursor-pointer rounded border-border"
-        />
+        {!item.isParent && (
+          <input
+            type="checkbox"
+            checked={selected}
+            onMouseDown={(event) => {
+              shiftClickRef.current = event.shiftKey;
+            }}
+            onChange={() => {
+              selectItem(item.href, { shiftKey: shiftClickRef.current });
+            }}
+            aria-label={`Select ${displayName}`}
+            className="h-4 w-4 cursor-pointer rounded border-border"
+          />
+        )}
       </td>
       <td className="px-4 py-3">
         <div className="flex min-w-0 items-start gap-2.5">

@@ -204,8 +204,14 @@ export function OpenDirProvider({
     return base;
   }, [filteredSortedItems.length, hasActiveFilter, recursiveSearchLoading, recursiveSearch, search]);
 
+  const selectableVisibleItems = useMemo(
+    () => visibleItems.filter((item) => !item.isParent),
+    [visibleItems],
+  );
+
   const allVisibleSelected =
-    visibleItems.length > 0 && visibleItems.every((item) => selectedHrefs.has(item.href));
+    selectableVisibleItems.length > 0 &&
+    selectableVisibleItems.every((item) => selectedHrefs.has(item.href));
 
   const setView = useCallback((value: ViewMode) => {
     setViewState(value);
@@ -281,8 +287,8 @@ export function OpenDirProvider({
   );
 
   const selectAllVisible = useCallback(() => {
-    setSelectedHrefs(new Set(visibleItems.map((item) => item.href)));
-  }, [visibleItems]);
+    setSelectedHrefs(new Set(selectableVisibleItems.map((item) => item.href)));
+  }, [selectableVisibleItems]);
 
   const clearSelection = useCallback(() => {
     setSelectedHrefs(new Set());

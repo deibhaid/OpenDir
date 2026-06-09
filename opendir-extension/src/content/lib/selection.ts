@@ -11,5 +11,8 @@ export function getRangeHrefs(
 
   const start = Math.min(anchorIndex, targetIndex);
   const end = Math.max(anchorIndex, targetIndex);
-  return items.slice(start, end + 1).map((item) => item.href);
+  return items
+    .slice(start, end + 1)
+    .filter((item) => !item.isParent)
+    .map((item) => item.href);
 }

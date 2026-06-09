@@ -32,4 +32,12 @@ describe('getRangeHrefs', () => {
     expect(getRangeHrefs(items, '/missing', '/b')).toEqual([]);
     expect(getRangeHrefs(items, '/b', '/missing')).toEqual([]);
   });
+
+  it('excludes parent directory rows from the range', () => {
+    const withParent: DirectoryItem[] = [
+      { href: '/..', name: '../', type: 'directory', isParent: true },
+      ...items,
+    ];
+    expect(getRangeHrefs(withParent, '/..', '/c')).toEqual(['/a', '/b', '/c']);
+  });
 });
