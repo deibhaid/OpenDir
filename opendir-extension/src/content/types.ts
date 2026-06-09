@@ -38,6 +38,7 @@ export interface DirectoryItem {
 }
 
 export interface ThumbnailSettings {
+  enabled: boolean;
   images: boolean;
   videos: boolean;
   text: boolean;
@@ -58,7 +59,7 @@ export const DEFAULT_SETTINGS: OpenDirSettings = {
   theme: 'light',
   font: 'mono',
   view: 'list',
-  thumbnails: { images: false, videos: false, text: true },
+  thumbnails: { enabled: true, images: false, videos: false, text: true },
   downloadDelayMs: 1500,
   downloadRandom: true,
   sortColumn: 'name',

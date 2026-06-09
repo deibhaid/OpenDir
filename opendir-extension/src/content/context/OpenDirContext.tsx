@@ -96,6 +96,7 @@ export function OpenDirProvider({
   const [recursiveSearchLoading, setRecursiveSearchLoading] = useState(false);
   const [view, setViewState] = useState<ViewMode>('list');
   const [thumbnails, setThumbnailsState] = useState<OpenDirSettings['thumbnails']>({
+    enabled: true,
     images: false,
     videos: false,
     text: true,

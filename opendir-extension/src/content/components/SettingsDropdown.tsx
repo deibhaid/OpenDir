@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Check, Settings2 } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
@@ -26,6 +27,39 @@ export function SettingsDropdown() {
     downloadRandom,
     setDownloadRandom,
   } = useOpenDir();
+  const savedThumbnailSubsRef = useRef({
+    images: thumbnails.images,
+    videos: thumbnails.videos,
+    text: thumbnails.text,
+  });
+
+  const setThumbnailMaster = (enabled: boolean) => {
+    if (!enabled) {
+      savedThumbnailSubsRef.current = {
+        images: thumbnails.images,
+        videos: thumbnails.videos,
+        text: thumbnails.text,
+      };
+      setThumbnails({ enabled: false, images: false, videos: false, text: false });
+      return;
+    }
+    setThumbnails({
+      enabled: true,
+      ...savedThumbnailSubsRef.current,
+    });
+  };
+
+  const setThumbnailSubs = (partial: Partial<Pick<typeof thumbnails, 'images' | 'videos' | 'text'>>) => {
+    const next = { ...thumbnails, ...partial };
+    setThumbnails(next);
+    if (next.enabled) {
+      savedThumbnailSubsRef.current = {
+        images: next.images,
+        videos: next.videos,
+        text: next.text,
+      };
+    }
+  };
 
   return (
     <DropdownMenu.Root>
@@ -100,16 +134,28 @@ export function SettingsDropdown() {
 
             {/* Column 3 — Thumbnails */}
             <div className="min-w-[7.5rem] border-l border-border py-1 pl-1">
-              <DropdownMenu.Label className="px-2 py-1.5 text-sm font-semibold">
+              <DropdownMenu.CheckboxItem
+                checked={thumbnails.enabled}
+                onCheckedChange={(checked) => setThumbnailMaster(checked === true)}
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-semibold outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <DropdownMenu.ItemIndicator>
+                    <Check className="h-3.5 w-3.5" />
+                  </DropdownMenu.ItemIndicator>
+                </span>
                 Thumbnails
-              </DropdownMenu.Label>
+              </DropdownMenu.CheckboxItem>
               <DropdownMenu.Separator className="my-1 h-px bg-border" />
               <DropdownMenu.CheckboxItem
-                checked={thumbnails.images}
-                onCheckedChange={(checked) =>
-                  setThumbnails({ ...thumbnails, images: checked === true })
-                }
-                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                checked={thumbnails.enabled && thumbnails.images}
+                disabled={!thumbnails.enabled}
+                onCheckedChange={(checked) => setThumbnailSubs({ images: checked === true })}
+                className={cn(
+                  'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent',
+                  !thumbnails.enabled && 'opacity-50',
+                )}
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -120,11 +166,13 @@ export function SettingsDropdown() {
                 Images
               </DropdownMenu.CheckboxItem>
               <DropdownMenu.CheckboxItem
-                checked={thumbnails.videos}
-                onCheckedChange={(checked) =>
-                  setThumbnails({ ...thumbnails, videos: checked === true })
-                }
-                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                checked={thumbnails.enabled && thumbnails.videos}
+                disabled={!thumbnails.enabled}
+                onCheckedChange={(checked) => setThumbnailSubs({ videos: checked === true })}
+                className={cn(
+                  'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent',
+                  !thumbnails.enabled && 'opacity-50',
+                )}
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -135,11 +183,13 @@ export function SettingsDropdown() {
                 Videos
               </DropdownMenu.CheckboxItem>
               <DropdownMenu.CheckboxItem
-                checked={thumbnails.text}
-                onCheckedChange={(checked) =>
-                  setThumbnails({ ...thumbnails, text: checked === true })
-                }
-                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                checked={thumbnails.enabled && thumbnails.text}
+                disabled={!thumbnails.enabled}
+                onCheckedChange={(checked) => setThumbnailSubs({ text: checked === true })}
+                className={cn(
+                  'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent',
+                  !thumbnails.enabled && 'opacity-50',
+                )}
                 onSelect={(event) => event.preventDefault()}
               >
                 <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

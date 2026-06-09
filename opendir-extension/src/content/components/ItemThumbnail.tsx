@@ -31,6 +31,14 @@ export function ItemThumbnail({
     return <span className={boxClass} aria-hidden />;
   }
 
+  if (!thumbnails.enabled) {
+    return (
+      <span className={cn('flex items-center justify-center', boxClass)}>
+        <FileTypeIcon item={item} className={iconClassName ?? 'h-5 w-5'} />
+      </span>
+    );
+  }
+
   if (item.fileType === 'image' && thumbnails.images && !imageFailed) {
     return (
       <img
