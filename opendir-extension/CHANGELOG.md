@@ -2,6 +2,23 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.7] — 2026-06-09
+
+### Changed
+
+- Search field placeholder shortened to "Search"
+- Browser tab title shows `OD: {current_dir}` (domain name at site root)
+
+### Fixed
+
+- Removed duplicate search clear button (native search control only)
+
+### Verified
+
+- Build, typecheck, and 40 unit tests passing
+
+[0.0.7]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.7
+
 ## [0.0.6] — 2026-06-08
 
 ### Fixed
