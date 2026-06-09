@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { ChevronLeft, ChevronRight, Download, X } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useOpenDir } from '../context/OpenDirContext';
 import { getPreviewableItems } from '../context/settings';
 import { triggerDownload, FileTypeIcon } from '../lib/files';
@@ -8,9 +8,11 @@ import { formatSize } from '../parser/format';
 import { Button } from './ui/Button';
 import { isPreviewableItem, isTextPreviewItem } from '../lib/preview';
 import { TextPreview } from './TextPreview';
+import { VideoPreview } from './VideoPreview';
 
 export function PreviewModal() {
   const { selectedItem, setSelectedItem, filteredSortedItems } = useOpenDir();
+  const playVideoRef = useRef<(() => void) | null>(null);
 
   const previewableItems = useMemo(
     () => getPreviewableItems(filteredSortedItems),
@@ -33,6 +35,14 @@ export function PreviewModal() {
   };
 
   useEffect(() => {
+    if (!isPreviewable || selectedItem?.fileType !== 'video') return;
+    const frame = window.requestAnimationFrame(() => {
+      playVideoRef.current?.();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isPreviewable, selectedItem?.fileType, selectedItem?.href]);
+
+  useEffect(() => {
     if (!isPreviewable) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -49,7 +59,15 @@ export function PreviewModal() {
     <Dialog.Root open={isPreviewable} onOpenChange={(open) => !open && setSelectedItem(null)}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 flex h-[85vh] w-[90vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-border bg-background p-0 shadow-2xl">
+        <Dialog.Content
+          className="fixed left-1/2 top-1/2 z-50 flex h-[85vh] w-[90vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-border bg-background p-0 shadow-2xl"
+          onOpenAutoFocus={(event) => {
+            if (selectedItem?.fileType === 'video' && playVideoRef.current) {
+              event.preventDefault();
+              playVideoRef.current();
+            }
+          }}
+        >
           {selectedItem && isPreviewable && (
             <>
               <div className="border-b p-6 pb-4">
@@ -122,11 +140,11 @@ export function PreviewModal() {
                   />
                 )}
                 {selectedItem.fileType === 'video' && (
-                  <video
-                    src={selectedItem.href}
-                    controls
-                    autoPlay
-                    className="max-h-full max-w-full rounded-lg"
+                  <VideoPreview
+                    item={selectedItem}
+                    onReadyToPlay={(play) => {
+                      playVideoRef.current = play;
+                    }}
                   />
                 )}
                 {selectedItem.fileType === 'audio' && (
@@ -137,7 +155,7 @@ export function PreviewModal() {
                     <div className="mb-4 text-sm text-muted-foreground">
                       {formatSize(selectedItem.size ?? selectedItem.sizeRaw)}
                     </div>
-                    <audio src={selectedItem.href} controls autoPlay className="w-full" />
+                    <audio src={selectedItem.href} controls autoPlay className="w-full" muted={false} />
                   </div>
                 )}
                 {isTextPreviewItem(selectedItem) && <TextPreview item={selectedItem} />}
