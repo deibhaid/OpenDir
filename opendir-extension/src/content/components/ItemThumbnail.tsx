@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import type { DirectoryItem, ThumbnailSettings } from '../types';
-import { thumbnailsActive } from '../types';
 import { isTextPreviewItem } from '../lib/preview';
 import { cn } from '../lib/utils';
 import { FileTypeIcon } from './FileTypeIcon';
@@ -32,7 +31,11 @@ export function ItemThumbnail({
   const [videoFailed, setVideoFailed] = useState(false);
   const boxClass = cn('shrink-0', className ?? 'h-5 w-5');
 
-  if (item.isParent || !thumbnailsActive(thumbnails)) {
+  if (item.isParent) {
+    return <EmptyThumbnailSlot className={className} />;
+  }
+
+  if (!thumbnails.enabled) {
     return <EmptyThumbnailSlot className={className} />;
   }
 
@@ -79,5 +82,9 @@ export function ItemThumbnail({
     );
   }
 
-  return <EmptyThumbnailSlot className={className} />;
+  return (
+    <span className={cn('flex items-center justify-center', boxClass)}>
+      <FileTypeIcon item={item} className={iconClassName ?? 'h-5 w-5'} />
+    </span>
+  );
 }
