@@ -9,7 +9,10 @@ export function getCurrentDirectoryLabel(url: string = window.location.href): st
 
   const segments = pathname.split('/').filter(Boolean);
   if (segments.length === 0) {
-    return '/';
+    if (parsed.protocol === 'file:') {
+      return parsed.href.replace(/\/?$/, '');
+    }
+    return parsed.hostname;
   }
 
   return decodeURIComponent(segments[segments.length - 1]);

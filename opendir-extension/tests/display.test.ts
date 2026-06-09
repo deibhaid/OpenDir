@@ -11,14 +11,18 @@ describe('getCurrentDirectoryLabel', () => {
     expect(getCurrentDirectoryLabel('https://example.com/foo%20bar/')).toBe('foo bar');
   });
 
-  it('uses / for the site root', () => {
-    expect(getCurrentDirectoryLabel('https://example.com/')).toBe('/');
+  it('uses the domain at the site root', () => {
+    expect(getCurrentDirectoryLabel('https://example.com/')).toBe('example.com');
   });
 });
 
 describe('getOpenDirTabTitle', () => {
   it('prefixes the current directory with OD:', () => {
     expect(getOpenDirTabTitle('https://example.com/repos/OpenDir/')).toBe('OD: OpenDir');
+  });
+
+  it('shows the domain at the site root', () => {
+    expect(getOpenDirTabTitle('https://example.com/')).toBe('OD: example.com');
   });
 });
 
