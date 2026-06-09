@@ -31,6 +31,16 @@ describe('recursiveSearch helpers', () => {
     expect(getRelativeDirectoryPath('https://example.com/docs/music/a/song.mp3', root)).toBe('a/');
   });
 
+  it('decodes URI-encoded segments in relative paths', () => {
+    const root = 'https://downloads.example.com/movies/';
+    expect(
+      getRelativeDirectoryPath(
+        'https://downloads.example.com/movies/28%20Years%20Later%20%282026%29/fanart.jpg',
+        root,
+      ),
+    ).toBe('28 Years Later (2026)/');
+  });
+
   it('matches item names and extension filters', () => {
     const mp3 = item({ name: 'song.mp3', href: '/song.mp3', ext: 'mp3' });
     const folder = item({ name: 'Album/', href: '/Album/', type: 'directory' });

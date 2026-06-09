@@ -61,4 +61,15 @@ describe('getDisplayName', () => {
     };
     expect(getDisplayName(item)).toBe('Neil Gaiman.-.American Gods');
   });
+
+  it('decodes URI-encoded relative paths from recursive search', () => {
+    const item: DirectoryItem = {
+      name: 'fanart',
+      href: 'https://x/movies/28%20Years%20Later%20%282026%29/fanart.jpg',
+      type: 'file',
+      ext: 'jpg',
+      relativePath: '28%20Years%20Later%20%282026%29/',
+    };
+    expect(getDisplayName(item)).toBe('28 Years Later (2026)/fanart');
+  });
 });
