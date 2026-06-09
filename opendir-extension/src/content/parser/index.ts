@@ -1,5 +1,4 @@
 import type { DirectoryItem } from '../types';
-import { safeDecodeURIComponent } from '../lib/url';
 import { classifyExtension, getExtension, isDirectoryName, parseSizeToBytes } from './format';
 
 export function isParentLink(href: string, baseUrl: string): boolean {
@@ -24,13 +23,13 @@ export function isParentLink(href: string, baseUrl: string): boolean {
 export function basenameFromHref(href: string, hrefAttr: string): string {
   try {
     const segment = new URL(href).pathname.split('/').filter(Boolean).pop();
-    if (segment) return safeDecodeURIComponent(segment);
+    if (segment) return decodeURIComponent(segment);
   } catch {
     // fall through
   }
 
   const fromAttr = hrefAttr.split('?')[0].replace(/\/$/, '').split('/').pop();
-  return fromAttr ? safeDecodeURIComponent(fromAttr) : hrefAttr;
+  return fromAttr ? decodeURIComponent(fromAttr) : hrefAttr;
 }
 
 export function parseAnchor(anchor: HTMLAnchorElement, baseUrl: string): DirectoryItem | null {

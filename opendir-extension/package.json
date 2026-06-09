@@ -1,6 +1,6 @@
 {
   "name": "opendir-extension",
-  "version": "0.0.9",
+  "version": "0.0.8",
   "private": true,
   "description": "OpenDir — Chrome MV3 extension for enhanced directory browsing",
   "author": "David W. Bryson",

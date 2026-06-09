@@ -109,20 +109,6 @@ describe('parser', () => {
     expect(movie?.size).toBeCloseTo(6.6 * 1024 ** 3, -6);
   });
 
-  it('parses links with malformed percent-encoding without throwing', () => {
-    const doc = parseHtml(`
-      <html><body><pre>
-        <a href="../">../</a>
-        <a href="broken%name.txt">broken%name.txt</a>
-        <a href="valid%20file.txt">valid file.txt</a>
-      </pre></body></html>
-    `, 'https://ftp5.gwdg.de/pub/');
-    const items = parseLinks(doc);
-    expect(items).toHaveLength(3);
-    expect(items.find((item) => item.href.includes('broken'))?.name).toBe('broken%name.txt');
-    expect(items.find((item) => item.href.includes('valid'))?.name).toBe('valid file.txt');
-  });
-
   it('uses full href basename when link text is truncated by the server', () => {
     const doc = parseHtml(`
       <html><body><pre>

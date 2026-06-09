@@ -1,5 +1,4 @@
 import type { DirectoryItem } from '../types';
-import { safeDecodeURIComponent } from '../lib/url';
 
 export function clampDelayMs(ms: number): number {
   return Math.max(250, ms);
@@ -34,7 +33,7 @@ export function computeDownloadOffsets(
 export function getDownloadFilename(item: DirectoryItem): string {
   try {
     const url = new URL(item.href);
-    const segment = safeDecodeURIComponent(url.pathname.split('/').filter(Boolean).pop() ?? '');
+    const segment = decodeURIComponent(url.pathname.split('/').filter(Boolean).pop() ?? '');
     return segment || item.name;
   } catch {
     return item.name;

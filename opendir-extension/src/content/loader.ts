@@ -52,16 +52,7 @@
     return;
   }
 
-  let mainUrl: string;
-  try {
-    if (!chrome.runtime?.id) return;
-    mainUrl = chrome.runtime.getURL('main.js');
-  } catch (error) {
-    if (String(error).includes('Extension context invalidated')) return;
-    console.error('[OpenDir] extension unavailable', error);
-    return;
-  }
-
+  const mainUrl = chrome.runtime.getURL('main.js');
   import(mainUrl)
     .then((module) => {
       const execute = module.onExecute ?? module.default?.onExecute;
@@ -71,7 +62,6 @@
       execute({ perf: performance.now() });
     })
     .catch((error) => {
-      if (String(error).includes('Extension context invalidated')) return;
       console.error('[OpenDir] failed to load main bundle', error);
     });
 })();
