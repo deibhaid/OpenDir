@@ -1,28 +1,18 @@
-const injectedSet = new Set<string>();
+import { InjectionTracker } from './injectionTracker';
+import { isPageDisabled, setPageDisabled } from './pagePreferences';
+
+const injectionTracker = new InjectionTracker();
 
 export function feIsHttp(url: string): boolean {
   return url.startsWith('http://') || url.startsWith('https://');
 }
 
-function injectionKey(tabId: number, url: string): string {
-  try {
-    const parsed = new URL(url);
-    return `${tabId}:${parsed.origin}${parsed.pathname}`;
-  } catch {
-    return `${tabId}:${url.split('?')[0]}`;
-  }
-}
-
-function markInjected(tabId: number, url: string): void {
-  injectedSet.add(injectionKey(tabId, url));
-}
-
-function isAlreadyInjected(tabId: number, url: string): boolean {
-  return injectedSet.has(injectionKey(tabId, url));
-}
-
-export async function injectOpenDir(tabId: number, url: string): Promise<void> {
-  if (isAlreadyInjected(tabId, url)) return;
+export async function injectOpenDir(
+  tabId: number,
+  url: string,
+  options?: { force?: boolean },
+): Promise<void> {
+  if (!options?.force && injectionTracker.isMarked(tabId, url)) return;
 
   await chrome.scripting.executeScript({
     target: { tabId, allFrames: true },
@@ -34,7 +24,7 @@ export async function injectOpenDir(tabId: number, url: string): Promise<void> {
     files: ['content.css'],
   });
 
-  markInjected(tabId, url);
+  injectionTracker.mark(tabId, url);
 }
 
 /**
@@ -142,15 +132,20 @@ export async function pageLooksLikeOpenDirectory(tabId: number): Promise<boolean
   return Boolean(result);
 }
 
-export async function feMaybeAutoInject(tabId: number, url: string): Promise<void> {
-  if (!feIsHttp(url)) return;
-  if (isAlreadyInjected(tabId, url)) return;
-
-  const [{ result: alreadyActive }] = await chrome.scripting.executeScript({
+export async function isOpenDirActive(tabId: number): Promise<boolean> {
+  const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId },
     func: () => document.documentElement.dataset.openDirActive === '1',
   });
-  if (alreadyActive) return;
+  return Boolean(result);
+}
+
+export async function feMaybeAutoInject(tabId: number, url: string): Promise<void> {
+  if (!feIsHttp(url)) return;
+  if (await isPageDisabled(url)) return;
+  if (injectionTracker.isMarked(tabId, url)) return;
+
+  if (await isOpenDirActive(tabId)) return;
 
   const isOpenDirectory = await pageLooksLikeOpenDirectory(tabId);
   if (isOpenDirectory) {
@@ -163,14 +158,15 @@ async function hasFileAccess(): Promise<boolean> {
 }
 
 chrome.tabs.onRemoved.addListener((tabId) => {
-  for (const key of injectedSet) {
-    if (key.startsWith(`${tabId}:`)) {
-      injectedSet.delete(key);
-    }
-  }
+  injectionTracker.clearTab(tabId);
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'loading') {
+    injectionTracker.clearTab(tabId);
+    return;
+  }
+
   if (changeInfo.status !== 'complete') return;
   const url = tab.url ?? changeInfo.url;
   if (!url || !feIsHttp(url)) return;
@@ -192,16 +188,19 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
   }
 
-  const [{ result: alreadyActive }] = await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: () => document.documentElement.dataset.openDirActive === '1',
-  });
-  if (alreadyActive) return;
+  if (await isOpenDirActive(tab.id)) {
+    await setPageDisabled(tab.url, true);
+    injectionTracker.clearTab(tab.id);
+    await chrome.tabs.reload(tab.id);
+    return;
+  }
+
+  await setPageDisabled(tab.url, false);
 
   const isOpenDirectory = await pageLooksLikeOpenDirectory(tab.id);
   if (!isOpenDirectory) return;
 
-  await injectOpenDir(tab.id, tab.url);
+  await injectOpenDir(tab.id, tab.url, { force: true });
 });
 
 console.log('[OpenDir] service worker ready');

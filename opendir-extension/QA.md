@@ -6,6 +6,8 @@ Use this checklist after loading `dist/` in `chrome://extensions`.
 
 - [ ] Auto-inject on HTTP(S) directory index without clicking toolbar icon
 - [ ] Skip auto-inject when `openDirActive` already set (no double inject on refresh)
+- [ ] Repeated hard refresh still auto-injects OpenDir on directory pages
+- [ ] Toolbar icon toggles OpenDir off (reload native listing) and back on
 - [ ] Manual inject via toolbar icon works on allowed tabs
 - [ ] `file://` without file access opens help page
 - [ ] `file://` with file access injects UI
