@@ -11,7 +11,7 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 
 function GridCard({ item }: { item: DirectoryItem }) {
-  const { thumbnails, setSelectedItem } = useOpenDir();
+  const { thumbnails, setSelectedItem, extensionFilter } = useOpenDir();
   const style = getCategoryStyle(item);
   const isPreviewable = isPreviewableItem(item);
 
@@ -44,6 +44,7 @@ function GridCard({ item }: { item: DirectoryItem }) {
           <ItemThumbnail
             item={item}
             thumbnails={thumbnails}
+            extensionFilter={extensionFilter}
             className="h-full w-full transition-transform group-hover:scale-105"
             iconClassName={cn('h-12 w-12 transition-transform group-hover:scale-110', style.text)}
             showVideoPlayOverlay

@@ -1,4 +1,3 @@
-import { decodePathForDisplay } from './display';
 import { detectDirectoryIndex } from '../../shared/directoryIndex';
 import { parseDirectoryListingFromHtml } from '../parser';
 import type { DirectoryItem } from '../types';
@@ -37,7 +36,7 @@ export function getRelativeDirectoryPath(itemUrl: string, rootUrl: string): stri
     segments.pop();
     relative = segments.length > 0 ? `${segments.join('/')}/` : '';
   }
-  return decodePathForDisplay(relative);
+  return relative;
 }
 
 export function itemMatchesQuery(item: DirectoryItem, query: string): boolean {

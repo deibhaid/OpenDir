@@ -99,7 +99,7 @@ export function ListViewHeader() {
 }
 
 function ListRow({ item }: { item: import('../types').DirectoryItem }) {
-  const { selectedHrefs, selectItem, setSelectedItem, thumbnails } = useOpenDir();
+  const { selectedHrefs, selectItem, setSelectedItem, thumbnails, extensionFilter } = useOpenDir();
   const opensPreview = isPreviewableItem(item);
   const selected = selectedHrefs.has(item.href);
   const displayName = getDisplayName(item);
@@ -147,6 +147,7 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
             <ItemThumbnail
               item={item}
               thumbnails={thumbnails}
+              extensionFilter={extensionFilter}
               className="h-5 w-5"
               iconClassName="h-4 w-4"
               showVideoPlayOverlay

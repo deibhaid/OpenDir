@@ -53,7 +53,7 @@ export function SettingsDropdown() {
         videos: thumbnails.videos,
         text: thumbnails.text,
       };
-      setThumbnails({ enabled: false, images: false, videos: false, text: false });
+      setThumbnails({ ...thumbnails, enabled: false });
       return;
     }
     setThumbnails({

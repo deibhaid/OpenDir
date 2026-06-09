@@ -31,14 +31,14 @@ describe('recursiveSearch helpers', () => {
     expect(getRelativeDirectoryPath('https://example.com/docs/music/a/song.mp3', root)).toBe('a/');
   });
 
-  it('decodes URI-encoded segments in relative paths', () => {
+  it('keeps URI-encoded segments in stored relative paths', () => {
     const root = 'https://downloads.example.com/movies/';
     expect(
       getRelativeDirectoryPath(
         'https://downloads.example.com/movies/28%20Years%20Later%20%282026%29/fanart.jpg',
         root,
       ),
-    ).toBe('28 Years Later (2026)/');
+    ).toBe('28%20Years%20Later%20%282026%29/');
   });
 
   it('matches item names and extension filters', () => {
