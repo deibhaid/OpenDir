@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import type { DirectoryItem, ThumbnailSettings } from '../types';
+import { isTextPreviewItem } from '../lib/preview';
 import { cn } from '../lib/utils';
 import { FileTypeIcon } from './FileTypeIcon';
+import { TextSnippetThumbnail } from './TextSnippetThumbnail';
 
 interface ItemThumbnailProps {
   item: DirectoryItem;
@@ -35,6 +37,16 @@ export function ItemThumbnail({
         loading="lazy"
         onError={() => setImageFailed(true)}
         className={cn('rounded object-cover', boxClass)}
+      />
+    );
+  }
+
+  if (isTextPreviewItem(item)) {
+    return (
+      <TextSnippetThumbnail
+        item={item}
+        className={boxClass}
+        iconClassName={iconClassName}
       />
     );
   }

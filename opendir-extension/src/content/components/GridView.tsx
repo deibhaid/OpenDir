@@ -62,7 +62,16 @@ function GridCard({ item }: { item: DirectoryItem }) {
 
       <div className="flex flex-1 flex-col gap-2 border-t p-4">
         <div className="flex items-start justify-between gap-2">
-          <a href={item.href} className="min-w-0 flex-1 truncate font-medium hover:underline" title={getDisplayName(item)}>
+          <a
+            href={item.href}
+            className="min-w-0 flex-1 truncate font-medium hover:underline"
+            title={getDisplayName(item)}
+            onClick={(event) => {
+              if (!isPreviewable) return;
+              event.preventDefault();
+              setSelectedItem(item);
+            }}
+          >
             {getDisplayName(item)}
           </a>
           {item.type === 'file' && (

@@ -130,13 +130,26 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
       </td>
       <td className="px-4 py-3">
         <div className="flex min-w-0 items-start gap-2.5">
-          <ItemThumbnail
-            item={item}
-            thumbnails={thumbnails}
-            className="mt-0.5 h-10 w-10"
-            iconClassName="mt-0.5 h-5 w-5"
-            showVideoPlayOverlay
-          />
+          <button
+            type="button"
+            className={cn(
+              'mt-0.5 shrink-0 rounded',
+              opensPreview ? 'cursor-pointer hover:opacity-90' : 'cursor-default',
+            )}
+            disabled={!opensPreview}
+            onClick={() => {
+              if (opensPreview) setSelectedItem(item);
+            }}
+            aria-label={opensPreview ? `Preview ${displayName}` : undefined}
+          >
+            <ItemThumbnail
+              item={item}
+              thumbnails={thumbnails}
+              className="h-10 w-10"
+              iconClassName="h-5 w-5"
+              showVideoPlayOverlay
+            />
+          </button>
           <a
             href={item.href}
             className="min-w-0 flex-1 break-words text-foreground hover:underline"
