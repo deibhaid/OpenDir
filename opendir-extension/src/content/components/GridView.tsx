@@ -11,9 +11,10 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 
 function GridCard({ item }: { item: DirectoryItem }) {
-  const { thumbnails, setSelectedItem, extensionFilter } = useOpenDir();
+  const { thumbnails, setSelectedItem, extensionFilter, focusedHref } = useOpenDir();
   const style = getCategoryStyle(item);
   const isPreviewable = isPreviewableItem(item);
+  const focused = focusedHref === item.href;
 
   const handleMediaClick = () => {
     if (item.type === 'directory') {
@@ -33,6 +34,7 @@ function GridCard({ item }: { item: DirectoryItem }) {
         'group flex flex-col overflow-hidden rounded-lg border bg-background transition-all',
         'hover:scale-[1.02] hover:border-primary/50 hover:shadow-lg',
         style.border,
+        focused && 'ring-2 ring-primary/40',
       )}
     >
       <button
@@ -102,12 +104,27 @@ function GridCard({ item }: { item: DirectoryItem }) {
   );
 }
 
-export function GridViewContent() {
+export function GridParentCard() {
   const { visibleItems } = useOpenDir();
+  const parent = visibleItems.find((item) => item.isParent);
+  if (!parent) return null;
+
+  return (
+    <div className="shrink-0 border-b border-border/80 bg-background p-4">
+      <div className="max-w-[12rem]">
+        <GridCard item={parent} />
+      </div>
+    </div>
+  );
+}
+
+export function GridViewContent({ omitParent = false }: { omitParent?: boolean }) {
+  const { visibleItems } = useOpenDir();
+  const rows = omitParent ? visibleItems.filter((item) => !item.isParent) : visibleItems;
 
   return (
     <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-      {visibleItems.map((item) => (
+      {rows.map((item) => (
         <GridCard key={item.href} item={item} />
       ))}
     </div>

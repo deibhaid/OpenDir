@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DIRECTORY_COVER_FILES,
   extensionFilterMatchesItem,
   isImageExtensionFilter,
   normalizeDirectoryHref,
@@ -89,6 +90,15 @@ describe('shouldShowDirectoryCover', () => {
     expect(
       shouldShowDirectoryCover({ enabled: true, images: false, videos: false, text: true }),
     ).toBe(false);
+  });
+
+  it('includes common movie-library cover filenames', () => {
+    expect(DIRECTORY_COVER_FILES).toEqual([
+      'fanart.jpg',
+      'poster.jpg',
+      'backdrop.jpg',
+      'folder.jpg',
+    ]);
   });
 });
 

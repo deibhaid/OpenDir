@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Infinity, LayoutGrid, LayoutList } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { ExtensionFilterSelect } from './ExtensionFilterSelect';
@@ -17,10 +18,24 @@ export function AppHeader() {
     selectedHrefs,
     clearSelection,
     downloadSelected,
+    copySelectedUrls,
+    registerSearchInput,
   } = useOpenDir();
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const copyResetRef = useRef<number | null>(null);
 
   const selectionCount = selectedHrefs.size;
   const hasSelection = selectionCount > 0;
+
+  const handleCopyUrls = () => {
+    void copySelectedUrls().then((ok) => {
+      setCopyState(ok ? 'copied' : 'failed');
+      if (copyResetRef.current != null) {
+        window.clearTimeout(copyResetRef.current);
+      }
+      copyResetRef.current = window.setTimeout(() => setCopyState('idle'), 2000);
+    });
+  };
 
   return (
     <header className="sticky top-0 z-10 flex flex-col gap-4 border-b border-border/70 bg-background/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
@@ -36,7 +51,7 @@ export function AppHeader() {
       >
         <div
           className={cn(
-            'flex items-center gap-3 overflow-hidden text-sm',
+            'flex items-center gap-2 overflow-hidden text-sm',
             hasSelection ? 'w-auto opacity-100' : 'pointer-events-none w-0 opacity-0',
           )}
           aria-hidden={!hasSelection}
@@ -44,6 +59,18 @@ export function AppHeader() {
           <span className="whitespace-nowrap tabular-nums">{selectionCount} selected</span>
           <Button size="sm" onClick={downloadSelected} tabIndex={hasSelection ? 0 : -1}>
             Download selected
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleCopyUrls}
+            tabIndex={hasSelection ? 0 : -1}
+          >
+            {copyState === 'copied'
+              ? 'Copied'
+              : copyState === 'failed'
+                ? 'Copy failed'
+                : 'Copy URLs'}
           </Button>
           <Button
             size="sm"
@@ -58,10 +85,11 @@ export function AppHeader() {
         <div className="relative min-w-0">
           <div className="flex h-10 items-stretch overflow-hidden rounded-lg border border-border/80 bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring/30">
             <input
+              ref={registerSearchInput}
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search"
+              placeholder="Search (/ to focus)"
               className="min-w-0 flex-1 border-0 bg-transparent px-3 text-sm leading-10 placeholder:text-muted-foreground/70 focus-visible:outline-none"
             />
             <div className="flex h-full shrink-0 items-center border-l border-border/80">

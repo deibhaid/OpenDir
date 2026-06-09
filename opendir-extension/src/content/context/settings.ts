@@ -24,6 +24,10 @@ const STORAGE_KEYS = {
   downloadRandom: 'opendir-downloadRandom',
   sortColumn: 'opendir-sortColumn',
   sortDir: 'opendir-sortDir',
+  pinParentDirectory: 'opendir-pinParentDirectory',
+  recursiveFilesOnly: 'opendir-recursiveFilesOnly',
+  recursiveSortByPath: 'opendir-recursiveSortByPath',
+  rememberSitePreferences: 'opendir-rememberSitePreferences',
 } as const;
 
 export async function loadSettings(): Promise<OpenDirSettings> {
@@ -42,6 +46,18 @@ export async function loadSettings(): Promise<OpenDirSettings> {
     downloadRandom: (stored[STORAGE_KEYS.downloadRandom] as boolean) ?? DEFAULT_SETTINGS.downloadRandom,
     sortColumn: (stored[STORAGE_KEYS.sortColumn] as SortColumn) ?? DEFAULT_SETTINGS.sortColumn,
     sortDir: (stored[STORAGE_KEYS.sortDir] as SortDir) ?? DEFAULT_SETTINGS.sortDir,
+    pinParentDirectory:
+      (stored[STORAGE_KEYS.pinParentDirectory] as boolean | undefined) ??
+      DEFAULT_SETTINGS.pinParentDirectory,
+    recursiveFilesOnly:
+      (stored[STORAGE_KEYS.recursiveFilesOnly] as boolean | undefined) ??
+      DEFAULT_SETTINGS.recursiveFilesOnly,
+    recursiveSortByPath:
+      (stored[STORAGE_KEYS.recursiveSortByPath] as boolean | undefined) ??
+      DEFAULT_SETTINGS.recursiveSortByPath,
+    rememberSitePreferences:
+      (stored[STORAGE_KEYS.rememberSitePreferences] as boolean | undefined) ??
+      DEFAULT_SETTINGS.rememberSitePreferences,
   };
 }
 
@@ -98,12 +114,21 @@ export function compareItems(a: DirectoryItem, b: DirectoryItem, column: SortCol
   }
 }
 
+export function compareItemsByRelativePath(a: DirectoryItem, b: DirectoryItem): number {
+  const pathCompare = (a.relativePath ?? '').localeCompare(b.relativePath ?? '', undefined, {
+    sensitivity: 'base',
+  });
+  if (pathCompare !== 0) return pathCompare;
+  return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+}
+
 export function getFilteredSortedItems(
   items: DirectoryItem[],
   search: string,
   extensionFilter: string,
   sortColumn: SortColumn,
   sortDir: SortDir,
+  options?: { recursiveSortByPath?: boolean },
 ): DirectoryItem[] {
   const query = search.trim().toLowerCase();
   const filtered = items.filter((item) => {
@@ -114,7 +139,13 @@ export function getFilteredSortedItems(
 
   const parent = filtered.find((item) => item.isParent);
   const rest = filtered.filter((item) => !item.isParent);
-  rest.sort((a, b) => compareItems(a, b, sortColumn, sortDir));
+
+  if (options?.recursiveSortByPath) {
+    rest.sort(compareItemsByRelativePath);
+  } else {
+    rest.sort((a, b) => compareItems(a, b, sortColumn, sortDir));
+  }
+
   return parent ? [parent, ...rest] : rest;
 }
 

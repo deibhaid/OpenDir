@@ -99,9 +99,17 @@ export function ListViewHeader() {
 }
 
 function ListRow({ item }: { item: import('../types').DirectoryItem }) {
-  const { selectedHrefs, selectItem, setSelectedItem, thumbnails, extensionFilter } = useOpenDir();
+  const {
+    selectedHrefs,
+    selectItem,
+    setSelectedItem,
+    thumbnails,
+    extensionFilter,
+    focusedHref,
+  } = useOpenDir();
   const opensPreview = isPreviewableItem(item);
   const selected = selectedHrefs.has(item.href);
+  const focused = focusedHref === item.href;
   const displayName = getDisplayName(item);
   const shiftClickRef = useRef(false);
 
@@ -110,6 +118,7 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
       className={cn(
         'border-b border-border/70 transition-colors hover:bg-muted/30',
         selected && 'bg-primary/5',
+        focused && 'bg-primary/10 ring-2 ring-inset ring-primary/30',
       )}
     >
       <td className="px-4 py-3">
@@ -187,14 +196,33 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
   );
 }
 
-export function ListViewBody() {
+export function ListViewParentRow() {
   const { visibleItems } = useOpenDir();
+  const parent = visibleItems.find((item) => item.isParent);
+  if (!parent) return null;
+
+  return (
+    <div className="shrink-0 border-b border-border/80 bg-background px-1">
+      <table className="w-full table-fixed text-sm">
+        <ListColumns />
+        <tbody>
+          <ListRow item={parent} />
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export function ListViewBody({ omitParent = false }: { omitParent?: boolean }) {
+  const { visibleItems } = useOpenDir();
+  const rows = omitParent ? visibleItems.filter((item) => !item.isParent) : visibleItems;
+  if (rows.length === 0) return null;
 
   return (
     <table className="w-full table-fixed text-sm">
       <ListColumns />
       <tbody>
-        {visibleItems.map((item) => (
+        {rows.map((item) => (
           <ListRow key={item.href} item={item} />
         ))}
       </tbody>
@@ -202,12 +230,13 @@ export function ListViewBody() {
   );
 }
 
-/** @deprecated Use ListViewHeader + ListViewBody in FileBrowser */
+/** @deprecated Use ListViewHeader + ListViewParentRow + ListViewBody in FileBrowser */
 export function ListViewContent() {
   return (
     <>
       <ListViewHeader />
-      <ListViewBody />
+      <ListViewParentRow />
+      <ListViewBody omitParent />
     </>
   );
 }

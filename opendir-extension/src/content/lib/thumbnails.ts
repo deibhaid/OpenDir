@@ -5,7 +5,12 @@ import {
   type ThumbnailSettings,
 } from '../types';
 
-export const DIRECTORY_COVER_FILES = ['fanart.jpg', 'poster.jpg'] as const;
+export const DIRECTORY_COVER_FILES = [
+  'fanart.jpg',
+  'poster.jpg',
+  'backdrop.jpg',
+  'folder.jpg',
+] as const;
 
 export function normalizeDirectoryHref(href: string): string {
   return href.endsWith('/') ? href : `${href}/`;

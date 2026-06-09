@@ -39,6 +39,14 @@ export function SettingsDropdown() {
     setDownloadDelayMs,
     downloadRandom,
     setDownloadRandom,
+    pinParentDirectory,
+    setPinParentDirectory,
+    recursiveFilesOnly,
+    setRecursiveFilesOnly,
+    recursiveSortByPath,
+    setRecursiveSortByPath,
+    rememberSitePreferences,
+    setRememberSitePreferences,
   } = useOpenDir();
   const savedThumbnailSubsRef = useRef({
     images: thumbnails.images,
@@ -85,7 +93,7 @@ export function SettingsDropdown() {
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="z-[100] w-max min-w-[24rem] rounded-lg border border-border bg-popover p-1 shadow-lg"
+          className="z-[100] w-max min-w-[30rem] rounded-lg border border-border bg-popover p-1 shadow-lg"
         >
           <div className="flex flex-row items-start gap-0 p-1">
             {/* Column 1 — Theme */}
@@ -204,6 +212,11 @@ export function SettingsDropdown() {
                 </span>
                 Documents
               </DropdownMenu.CheckboxItem>
+              {!thumbnails.images && thumbnails.enabled && (
+                <p className="px-2 pb-1 text-[11px] leading-snug text-muted-foreground">
+                  Enable Images for JPG previews and folder cover art.
+                </p>
+              )}
             </div>
 
             {/* Column 4 — Multi-file download */}
@@ -240,6 +253,63 @@ export function SettingsDropdown() {
                   Random duration
                 </DropdownMenu.CheckboxItem>
               </div>
+            </div>
+
+            {/* Column 5 — Browse */}
+            <div className="min-w-[9.5rem] border-l border-border py-1 pl-1">
+              <DropdownMenu.Label className="px-2 py-1.5 text-sm font-semibold">
+                Browse
+              </DropdownMenu.Label>
+              <DropdownMenu.Separator className="my-1 h-px bg-border" />
+              <DropdownMenu.CheckboxItem
+                checked={pinParentDirectory}
+                onCheckedChange={(checked) => setPinParentDirectory(checked === true)}
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <SettingsCheckboxIndicator checked={pinParentDirectory} />
+                </span>
+                Pin parent (../)
+              </DropdownMenu.CheckboxItem>
+              <DropdownMenu.CheckboxItem
+                checked={recursiveFilesOnly}
+                onCheckedChange={(checked) => setRecursiveFilesOnly(checked === true)}
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <SettingsCheckboxIndicator checked={recursiveFilesOnly} />
+                </span>
+                Recursive: files only
+              </DropdownMenu.CheckboxItem>
+              <DropdownMenu.CheckboxItem
+                checked={recursiveSortByPath}
+                onCheckedChange={(checked) => setRecursiveSortByPath(checked === true)}
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <SettingsCheckboxIndicator checked={recursiveSortByPath} />
+                </span>
+                Recursive: sort by path
+              </DropdownMenu.CheckboxItem>
+              <DropdownMenu.CheckboxItem
+                checked={rememberSitePreferences}
+                onCheckedChange={(checked) => setRememberSitePreferences(checked === true)}
+                className="relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent"
+                onSelect={(event) => event.preventDefault()}
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <SettingsCheckboxIndicator checked={rememberSitePreferences} />
+                </span>
+                Remember per folder
+              </DropdownMenu.CheckboxItem>
+              {rememberSitePreferences && (
+                <p className="px-2 pb-1 text-[11px] leading-snug text-muted-foreground">
+                  Saves recursive search and extension filter for each directory URL.
+                </p>
+              )}
             </div>
           </div>
         </DropdownMenu.Content>

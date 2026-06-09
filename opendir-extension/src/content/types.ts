@@ -63,6 +63,10 @@ export interface OpenDirSettings {
   downloadRandom: boolean;
   sortColumn: SortColumn;
   sortDir: SortDir;
+  pinParentDirectory: boolean;
+  recursiveFilesOnly: boolean;
+  recursiveSortByPath: boolean;
+  rememberSitePreferences: boolean;
 }
 
 export const DEFAULT_SETTINGS: OpenDirSettings = {
@@ -74,6 +78,10 @@ export const DEFAULT_SETTINGS: OpenDirSettings = {
   downloadRandom: true,
   sortColumn: 'name',
   sortDir: 'asc',
+  pinParentDirectory: false,
+  recursiveFilesOnly: false,
+  recursiveSortByPath: true,
+  rememberSitePreferences: true,
 };
 
 export const PAGE_SIZE = 50;

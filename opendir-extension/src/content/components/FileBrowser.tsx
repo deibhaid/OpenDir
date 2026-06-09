@@ -1,8 +1,8 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useOpenDir } from '../context/OpenDirContext';
 import { EmptyState, GridSkeletonCards, ListSkeletonRows } from './EmptyState';
-import { GridViewContent } from './GridView';
-import { ListViewBody, ListViewHeader } from './ListView';
+import { GridParentCard, GridViewContent } from './GridView';
+import { ListViewBody, ListViewHeader, ListViewParentRow } from './ListView';
 
 export function FileBrowser() {
   const {
@@ -13,6 +13,7 @@ export function FileBrowser() {
     loadMore,
     footerText,
     items,
+    pinParentDirectory,
   } = useOpenDir();
 
   const hasParsedItems = items.length > 0;
@@ -23,17 +24,20 @@ export function FileBrowser() {
 
   if (view === 'grid') {
     return (
-      <div id="scrollableDiv" className="min-h-0 flex-1 overflow-y-auto">
-        <InfiniteScroll
-          dataLength={visibleItems.length}
-          next={loadMore}
-          hasMore={hasMore}
-          loader={<GridSkeletonCards />}
-          scrollableTarget="scrollableDiv"
-        >
-          <GridViewContent />
-        </InfiniteScroll>
-        <div className="py-8 text-center text-sm text-muted-foreground">{footerText}</div>
+      <div className="flex min-h-0 flex-1 flex-col">
+        {pinParentDirectory ? <GridParentCard /> : null}
+        <div id="scrollableDiv" className="min-h-0 flex-1 overflow-y-auto">
+          <InfiniteScroll
+            dataLength={visibleItems.length}
+            next={loadMore}
+            hasMore={hasMore}
+            loader={<GridSkeletonCards />}
+            scrollableTarget="scrollableDiv"
+          >
+            <GridViewContent omitParent={pinParentDirectory} />
+          </InfiniteScroll>
+          <div className="py-8 text-center text-sm text-muted-foreground">{footerText}</div>
+        </div>
       </div>
     );
   }
@@ -41,6 +45,7 @@ export function FileBrowser() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <ListViewHeader />
+      {pinParentDirectory ? <ListViewParentRow /> : null}
       <div id="scrollableDiv" className="min-h-0 flex-1 overflow-y-auto px-1">
         <InfiniteScroll
           dataLength={visibleItems.length}
@@ -49,7 +54,7 @@ export function FileBrowser() {
           loader={<ListSkeletonRows />}
           scrollableTarget="scrollableDiv"
         >
-          <ListViewBody />
+          <ListViewBody omitParent={pinParentDirectory} />
         </InfiniteScroll>
         <div className="py-8 text-center text-sm text-muted-foreground">{footerText}</div>
       </div>

@@ -8,8 +8,11 @@ import React, {
   useState,
 } from 'react';
 import { downloadSelected as runBatchDownload } from '../download/batchDownload';
+import { copySelectedUrls } from '../lib/clipboard';
 import { applyFontFamily } from '../lib/fonts';
+import { isPreviewableItem } from '../lib/preview';
 import { searchRecursively } from '../lib/recursiveSearch';
+import { loadSiteBrowsePreferences, saveSiteBrowsePreferences } from '../lib/sitePreferences';
 import { getRangeHrefs } from '../lib/selection';
 import {
   ALL_EXTENSIONS_FILTER,
@@ -58,6 +61,7 @@ interface OpenDirContextValue {
   selectAllVisible: () => void;
   clearSelection: () => void;
   downloadSelected: () => void;
+  copySelectedUrls: () => Promise<boolean>;
   selectedItem: DirectoryItem | null;
   setSelectedItem: (item: DirectoryItem | null) => void;
   downloadDelayMs: number;
@@ -68,6 +72,15 @@ interface OpenDirContextValue {
   setTheme: (theme: ThemeMode) => void;
   font: FontFamily;
   setFont: (font: FontFamily) => void;
+  pinParentDirectory: boolean;
+  setPinParentDirectory: (value: boolean) => void;
+  recursiveFilesOnly: boolean;
+  setRecursiveFilesOnly: (value: boolean) => void;
+  recursiveSortByPath: boolean;
+  setRecursiveSortByPath: (value: boolean) => void;
+  rememberSitePreferences: boolean;
+  setRememberSitePreferences: (value: boolean) => void;
+  focusedHref: string | null;
   filteredSortedItems: DirectoryItem[];
   visibleItems: DirectoryItem[];
   visibleCount: number;
@@ -77,6 +90,7 @@ interface OpenDirContextValue {
   hasActiveFilter: boolean;
   allVisibleSelected: boolean;
   toggleSelectAllVisible: () => void;
+  registerSearchInput: (element: HTMLInputElement | null) => void;
 }
 
 const OpenDirContext = createContext<OpenDirContextValue | null>(null);
@@ -90,7 +104,7 @@ export function OpenDirProvider({
 }) {
   const [items] = useState(initialItems);
   const [search, setSearch] = useState('');
-  const [recursiveSearch, setRecursiveSearch] = useState(false);
+  const [recursiveSearch, setRecursiveSearchState] = useState(false);
   const [recursiveResults, setRecursiveResults] = useState<DirectoryItem[] | null>(null);
   const [recursiveDiscoveredItems, setRecursiveDiscoveredItems] = useState<DirectoryItem[]>([]);
   const [recursiveSearchLoading, setRecursiveSearchLoading] = useState(false);
@@ -101,7 +115,7 @@ export function OpenDirProvider({
     videos: false,
     text: true,
   });
-  const [extensionFilter, setExtensionFilter] = useState<string>(ALL_EXTENSIONS_FILTER);
+  const [extensionFilter, setExtensionFilterState] = useState<string>(ALL_EXTENSIONS_FILTER);
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [selectedHrefs, setSelectedHrefs] = useState<Set<string>>(new Set());
@@ -111,10 +125,21 @@ export function OpenDirProvider({
   const [downloadRandom, setDownloadRandomState] = useState(true);
   const [theme, setThemeState] = useState<ThemeMode>('light');
   const [font, setFontState] = useState<FontFamily>('mono');
+  const [pinParentDirectory, setPinParentDirectoryState] = useState(false);
+  const [recursiveFilesOnly, setRecursiveFilesOnlyState] = useState(false);
+  const [recursiveSortByPath, setRecursiveSortByPathState] = useState(true);
+  const [rememberSitePreferences, setRememberSitePreferencesState] = useState(true);
+  const [focusedHref, setFocusedHref] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const rememberSitePreferencesRef = useRef(rememberSitePreferences);
 
   useEffect(() => {
-    void loadSettings().then((settings) => {
+    rememberSitePreferencesRef.current = rememberSitePreferences;
+  }, [rememberSitePreferences]);
+
+  useEffect(() => {
+    void loadSettings().then(async (settings) => {
       setViewState(settings.view);
       setThumbnailsState(settings.thumbnails);
       setSortColumn(settings.sortColumn);
@@ -125,12 +150,36 @@ export function OpenDirProvider({
       applyThemeClass(settings.theme);
       setFontState(settings.font);
       applyFontFamily(settings.font);
+      setPinParentDirectoryState(settings.pinParentDirectory);
+      setRecursiveFilesOnlyState(settings.recursiveFilesOnly);
+      setRecursiveSortByPathState(settings.recursiveSortByPath);
+      setRememberSitePreferencesState(settings.rememberSitePreferences);
+
+      if (settings.rememberSitePreferences) {
+        const sitePrefs = await loadSiteBrowsePreferences();
+        if (sitePrefs.recursiveSearch !== undefined) {
+          setRecursiveSearchState(sitePrefs.recursiveSearch);
+        }
+        if (sitePrefs.extensionFilter !== undefined) {
+          setExtensionFilterState(sitePrefs.extensionFilter);
+        }
+      }
     });
   }, []);
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [search, extensionFilter, sortColumn, sortDir, recursiveSearch, recursiveResults]);
+  }, [
+    search,
+    extensionFilter,
+    sortColumn,
+    sortDir,
+    recursiveSearch,
+    recursiveResults,
+    recursiveFilesOnly,
+    recursiveSortByPath,
+    pinParentDirectory,
+  ]);
 
   useEffect(() => {
     if (!recursiveSearch || !search.trim()) {
@@ -167,11 +216,19 @@ export function OpenDirProvider({
   }, [recursiveSearch, search, items]);
 
   const listingItems = useMemo(() => {
+    let list: DirectoryItem[];
     if (recursiveSearch && search.trim() && recursiveResults) {
-      return recursiveResults;
+      list = recursiveResults;
+    } else {
+      list = items;
     }
-    return items;
-  }, [recursiveSearch, search, recursiveResults, items]);
+
+    if (recursiveSearch && search.trim() && recursiveFilesOnly) {
+      list = list.filter((item) => item.isParent || item.type === 'file');
+    }
+
+    return list;
+  }, [recursiveSearch, search, recursiveResults, items, recursiveFilesOnly]);
 
   const directoryExtensions = useMemo(() => {
     if (recursiveSearch && search.trim() && recursiveDiscoveredItems.length > 0) {
@@ -184,13 +241,18 @@ export function OpenDirProvider({
     if (extensionFilter === ALL_EXTENSIONS_FILTER) return;
     const available = new Set(directoryExtensions.map((ext) => `*.${ext}`));
     if (!available.has(extensionFilter)) {
-      setExtensionFilter(ALL_EXTENSIONS_FILTER);
+      setExtensionFilterState(ALL_EXTENSIONS_FILTER);
     }
   }, [directoryExtensions, extensionFilter]);
 
+  const useRecursivePathSort = recursiveSearch && search.trim().length > 0 && recursiveSortByPath;
+
   const filteredSortedItems = useMemo(
-    () => getFilteredSortedItems(listingItems, search, extensionFilter, sortColumn, sortDir),
-    [listingItems, search, extensionFilter, sortColumn, sortDir],
+    () =>
+      getFilteredSortedItems(listingItems, search, extensionFilter, sortColumn, sortDir, {
+        recursiveSortByPath: useRecursivePathSort,
+      }),
+    [listingItems, search, extensionFilter, sortColumn, sortDir, useRecursivePathSort],
   );
 
   const visibleItems = useMemo(
@@ -223,6 +285,30 @@ export function OpenDirProvider({
     selectableVisibleItems.length > 0 &&
     selectableVisibleItems.every((item) => selectedHrefs.has(item.href));
 
+  const persistSiteBrowsePreferences = useCallback(
+    (partial: { recursiveSearch?: boolean; extensionFilter?: string }) => {
+      if (!rememberSitePreferencesRef.current) return;
+      void saveSiteBrowsePreferences(partial);
+    },
+    [],
+  );
+
+  const setRecursiveSearch = useCallback(
+    (value: boolean) => {
+      setRecursiveSearchState(value);
+      persistSiteBrowsePreferences({ recursiveSearch: value });
+    },
+    [persistSiteBrowsePreferences],
+  );
+
+  const setExtensionFilter = useCallback(
+    (filter: string) => {
+      setExtensionFilterState(filter);
+      persistSiteBrowsePreferences({ extensionFilter: filter });
+    },
+    [persistSiteBrowsePreferences],
+  );
+
   const setView = useCallback((value: ViewMode) => {
     setViewState(value);
     void saveSetting('view', value);
@@ -254,6 +340,26 @@ export function OpenDirProvider({
     setFontState(value);
     applyFontFamily(value);
     void saveSetting('font', value);
+  }, []);
+
+  const setPinParentDirectory = useCallback((value: boolean) => {
+    setPinParentDirectoryState(value);
+    void saveSetting('pinParentDirectory', value);
+  }, []);
+
+  const setRecursiveFilesOnly = useCallback((value: boolean) => {
+    setRecursiveFilesOnlyState(value);
+    void saveSetting('recursiveFilesOnly', value);
+  }, []);
+
+  const setRecursiveSortByPath = useCallback((value: boolean) => {
+    setRecursiveSortByPathState(value);
+    void saveSetting('recursiveSortByPath', value);
+  }, []);
+
+  const setRememberSitePreferences = useCallback((value: boolean) => {
+    setRememberSitePreferencesState(value);
+    void saveSetting('rememberSitePreferences', value);
   }, []);
 
   const toggleSort = useCallback(
@@ -323,17 +429,99 @@ export function OpenDirProvider({
     runBatchDownload(filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom);
   }, [filteredSortedItems, selectedHrefs, downloadDelayMs, downloadRandom]);
 
+  const copySelectedUrlsAction = useCallback(async () => {
+    return copySelectedUrls(filteredSortedItems, selectedHrefs);
+  }, [filteredSortedItems, selectedHrefs]);
+
   const loadMore = useCallback(() => {
     setVisibleCount((count) => count + PAGE_SIZE);
   }, []);
 
+  const registerSearchInput = useCallback((element: HTMLInputElement | null) => {
+    searchInputRef.current = element;
+  }, []);
+
+  const activateFocusedItem = useCallback(
+    (item: DirectoryItem) => {
+      if (item.isParent || item.type === 'directory') {
+        window.location.href = item.href;
+        return;
+      }
+      if (isPreviewableItem(item)) {
+        setSelectedItem(item);
+        return;
+      }
+      window.open(item.href, '_self');
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (focusedHref && !visibleItems.some((item) => item.href === focusedHref)) {
+      setFocusedHref(null);
+    }
+  }, [focusedHref, visibleItems]);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') clearSelection();
+      if (event.key === 'Escape') {
+        if (selectedItem) {
+          setSelectedItem(null);
+          return;
+        }
+        clearSelection();
+        setFocusedHref(null);
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      const inEditable =
+        target != null &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable);
+
+      if (event.key === '/' && !inEditable && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+        return;
+      }
+
+      if (inEditable && event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+        return;
+      }
+
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Enter') {
+        return;
+      }
+
+      if (visibleItems.length === 0) return;
+
+      const currentIndex = focusedHref
+        ? visibleItems.findIndex((item) => item.href === focusedHref)
+        : -1;
+
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const delta = event.key === 'ArrowDown' ? 1 : -1;
+        const startIndex = currentIndex >= 0 ? currentIndex : event.key === 'ArrowDown' ? -1 : 0;
+        const nextIndex = Math.max(0, Math.min(visibleItems.length - 1, startIndex + delta));
+        setFocusedHref(visibleItems[nextIndex]?.href ?? null);
+        return;
+      }
+
+      if (event.key === 'Enter' && currentIndex >= 0) {
+        event.preventDefault();
+        const item = visibleItems[currentIndex];
+        if (item) activateFocusedItem(item);
+      }
     };
+
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [clearSelection]);
+  }, [activateFocusedItem, clearSelection, focusedHref, selectedItem, visibleItems]);
 
   const value: OpenDirContextValue = {
     items,
@@ -359,6 +547,7 @@ export function OpenDirProvider({
     selectAllVisible,
     clearSelection,
     downloadSelected,
+    copySelectedUrls: copySelectedUrlsAction,
     selectedItem,
     setSelectedItem,
     downloadDelayMs,
@@ -369,6 +558,15 @@ export function OpenDirProvider({
     setTheme,
     font,
     setFont,
+    pinParentDirectory,
+    setPinParentDirectory,
+    recursiveFilesOnly,
+    setRecursiveFilesOnly,
+    recursiveSortByPath,
+    setRecursiveSortByPath,
+    rememberSitePreferences,
+    setRememberSitePreferences,
+    focusedHref,
     filteredSortedItems,
     visibleItems,
     visibleCount,
@@ -378,6 +576,7 @@ export function OpenDirProvider({
     hasActiveFilter,
     allVisibleSelected,
     toggleSelectAllVisible,
+    registerSearchInput,
   };
 
   return (
