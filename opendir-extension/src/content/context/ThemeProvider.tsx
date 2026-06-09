@@ -8,17 +8,36 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+export function resolveThemeMode(theme: ThemeMode): 'light' | 'dark' {
+  if (theme === 'system') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return theme;
+}
+
+/** Clear host directory-listing styles so dark-by-default servers do not leak through. */
+export function prepareDocumentForOpenDir(theme: ThemeMode = 'light'): void {
+  const root = document.documentElement;
+  root.removeAttribute('class');
+  root.style.removeProperty('color');
+  root.style.removeProperty('background');
+  root.style.removeProperty('background-color');
+  root.style.removeProperty('color-scheme');
+
+  document.body.innerHTML = '';
+  document.body.removeAttribute('class');
+  document.body.style.cssText = 'margin: 0';
+
+  applyThemeClass(theme);
+}
+
 export function applyThemeClass(theme: ThemeMode): void {
   const root = document.documentElement;
+  const resolved = resolveThemeMode(theme);
+
   root.classList.remove('light', 'dark');
-
-  if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.classList.add(prefersDark ? 'dark' : 'light');
-    return;
-  }
-
-  root.classList.add(theme);
+  root.classList.add(resolved);
+  root.style.colorScheme = resolved;
 }
 
 export function ThemeProvider({

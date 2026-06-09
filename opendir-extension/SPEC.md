@@ -1,7 +1,7 @@
 # OpenDir — Product Specification
 
 **Author:** David W. Bryson  
-**Version:** 0.0.8  
+**Version:** 0.0.9  
 **Type:** Chrome Manifest V3 Extension
 
 OpenDir replaces bare Apache/nginx directory index pages and enhances local `file://` directory browsing with search, filters, previews, and batch downloads.
@@ -196,7 +196,7 @@ Capture data **before** DOM is cleared.
 
 ## 15. Manifest
 
-- name: OpenDir, author: David W. Bryson, version: 0.0.8
+- name: OpenDir, author: David W. Bryson, version: 0.0.9
 - permissions: `activeTab`, `scripting`, `storage`
 - host_permissions: `http://*/*`, `https://*/*`
 - background service worker module

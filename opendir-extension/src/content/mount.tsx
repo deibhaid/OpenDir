@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { getOpenDirTabTitle } from './lib/display';
 import { parseDirectoryListing } from './parser';
+import { prepareDocumentForOpenDir } from './context/ThemeProvider';
+import { loadSettings } from './context/settings';
 import { detectDirectoryIndex } from '../shared/directoryIndex';
 import './main.css';
 
@@ -10,7 +12,7 @@ interface ExecuteOptions {
   perf: number;
 }
 
-export function mountOpenDir({ perf }: ExecuteOptions): void {
+export async function mountOpenDir({ perf }: ExecuteOptions): Promise<void> {
   if (document.documentElement.dataset.openDirActive === '1') {
     return;
   }
@@ -27,8 +29,9 @@ export function mountOpenDir({ perf }: ExecuteOptions): void {
   const titleElement = document.createElement('title');
   titleElement.textContent = getOpenDirTabTitle();
   document.head.appendChild(titleElement);
-  document.body.innerHTML = '';
-  document.body.style.margin = '0';
+
+  const settings = await loadSettings();
+  prepareDocumentForOpenDir(settings.theme);
 
   const rootElement = document.createElement('div');
   rootElement.id = 'root';
