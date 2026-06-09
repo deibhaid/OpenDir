@@ -1,8 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Check, Settings2 } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
+import { FONT_OPTIONS, FONT_STACKS } from '../lib/fonts';
 import { getAppPortalContainer } from '../lib/portal';
-import type { ThemeMode } from '../types';
+import type { FontFamily, ThemeMode } from '../types';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
 
@@ -16,6 +17,8 @@ export function SettingsDropdown() {
   const {
     theme,
     setTheme,
+    font,
+    setFont,
     thumbnails,
     setThumbnails,
     downloadDelayMs,
@@ -66,7 +69,36 @@ export function SettingsDropdown() {
               </DropdownMenu.RadioGroup>
             </div>
 
-            {/* Column 2 — Thumbnails */}
+            {/* Column 2 — Font */}
+            <div className="min-w-[7.5rem] border-l border-border py-1 pl-1">
+              <DropdownMenu.Label className="px-2 py-1.5 text-sm font-semibold">
+                Font
+              </DropdownMenu.Label>
+              <DropdownMenu.Separator className="my-1 h-px bg-border" />
+              <DropdownMenu.RadioGroup value={font} onValueChange={(value) => setFont(value as FontFamily)}>
+                {FONT_OPTIONS.map((option) => (
+                  <DropdownMenu.RadioItem
+                    key={option.value}
+                    value={option.value}
+                    className={cn(
+                      'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none',
+                      'focus:bg-accent data-[highlighted]:bg-accent',
+                    )}
+                    style={{ fontFamily: FONT_STACKS[option.value] }}
+                    onSelect={(event) => event.preventDefault()}
+                  >
+                    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                      <DropdownMenu.ItemIndicator>
+                        <Check className="h-3.5 w-3.5" />
+                      </DropdownMenu.ItemIndicator>
+                    </span>
+                    {option.label}
+                  </DropdownMenu.RadioItem>
+                ))}
+              </DropdownMenu.RadioGroup>
+            </div>
+
+            {/* Column 3 — Thumbnails */}
             <div className="min-w-[7.5rem] border-l border-border py-1 pl-1">
               <DropdownMenu.Label className="px-2 py-1.5 text-sm font-semibold">
                 Thumbnails
@@ -104,7 +136,7 @@ export function SettingsDropdown() {
               </DropdownMenu.CheckboxItem>
             </div>
 
-            {/* Column 3 — Multi-file download */}
+            {/* Column 4 — Multi-file download */}
             <div className="min-w-[9rem] border-l border-border py-1 pl-1">
               <DropdownMenu.Label className="px-2 py-1.5 text-sm font-semibold">
                 Multi-file download

@@ -45,16 +45,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: [
-          'ui-monospace',
-          'SFMono-Regular',
-          'Menlo',
-          'Monaco',
-          'Consolas',
-          'Liberation Mono',
-          'Courier New',
-          'monospace',
-        ],
+        sans: ['var(--opendir-font-family)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

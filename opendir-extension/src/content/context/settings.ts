@@ -7,14 +7,17 @@ import {
   PREVIEWABLE_FILE_TYPES,
   type SortColumn,
   type SortDir,
+  type FontFamily,
   type ThemeMode,
   type ThumbnailSettings,
   type ViewMode,
 } from '../types';
+import { isFontFamily } from '../lib/fonts';
 import { parseDate } from '../parser/format';
 
 const STORAGE_KEYS = {
   theme: 'opendir-theme',
+  font: 'opendir-font',
   view: 'opendir-view',
   thumbnails: 'opendir-thumbnails',
   downloadDelayMs: 'opendir-downloadDelayMs',
@@ -27,6 +30,9 @@ export async function loadSettings(): Promise<OpenDirSettings> {
   const stored = await chrome.storage.local.get(Object.values(STORAGE_KEYS));
   return {
     theme: (stored[STORAGE_KEYS.theme] as ThemeMode) ?? DEFAULT_SETTINGS.theme,
+    font: isFontFamily(stored[STORAGE_KEYS.font])
+      ? stored[STORAGE_KEYS.font]
+      : DEFAULT_SETTINGS.font,
     view: (stored[STORAGE_KEYS.view] as ViewMode) ?? DEFAULT_SETTINGS.view,
     thumbnails: (stored[STORAGE_KEYS.thumbnails] as ThumbnailSettings) ?? DEFAULT_SETTINGS.thumbnails,
     downloadDelayMs: (stored[STORAGE_KEYS.downloadDelayMs] as number) ?? DEFAULT_SETTINGS.downloadDelayMs,

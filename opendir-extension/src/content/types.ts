@@ -16,6 +16,9 @@ export const ALL_EXTENSIONS_FILTER = '*.*';
 
 export type ViewMode = 'grid' | 'list';
 export type ThemeMode = 'light' | 'dark' | 'system';
+export type { FontFamily } from './lib/fonts';
+import type { FontFamily } from './lib/fonts';
+export { DEFAULT_FONT_FAMILY } from './lib/fonts';
 export type SortColumn = 'name' | 'ext' | 'date' | 'size';
 export type SortDir = 'asc' | 'desc';
 
@@ -41,6 +44,7 @@ export interface ThumbnailSettings {
 
 export interface OpenDirSettings {
   theme: ThemeMode;
+  font: FontFamily;
   view: ViewMode;
   thumbnails: ThumbnailSettings;
   downloadDelayMs: number;
@@ -51,6 +55,7 @@ export interface OpenDirSettings {
 
 export const DEFAULT_SETTINGS: OpenDirSettings = {
   theme: 'light',
+  font: 'mono',
   view: 'list',
   thumbnails: { images: false, videos: false },
   downloadDelayMs: 1500,

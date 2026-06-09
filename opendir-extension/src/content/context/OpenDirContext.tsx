@@ -8,11 +8,13 @@ import React, {
   useState,
 } from 'react';
 import { downloadSelected as runBatchDownload } from '../download/batchDownload';
+import { applyFontFamily } from '../lib/fonts';
 import { searchRecursively } from '../lib/recursiveSearch';
 import { getRangeHrefs } from '../lib/selection';
 import {
   ALL_EXTENSIONS_FILTER,
   type DirectoryItem,
+  type FontFamily,
   type OpenDirSettings,
   type SortColumn,
   type SortDir,
@@ -63,6 +65,8 @@ interface OpenDirContextValue {
   setDownloadRandom: (value: boolean) => void;
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
+  font: FontFamily;
+  setFont: (font: FontFamily) => void;
   filteredSortedItems: DirectoryItem[];
   visibleItems: DirectoryItem[];
   visibleCount: number;
@@ -103,6 +107,7 @@ export function OpenDirProvider({
   const [downloadDelayMs, setDownloadDelayMsState] = useState(1500);
   const [downloadRandom, setDownloadRandomState] = useState(true);
   const [theme, setThemeState] = useState<ThemeMode>('light');
+  const [font, setFontState] = useState<FontFamily>('mono');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
@@ -115,6 +120,8 @@ export function OpenDirProvider({
       setDownloadRandomState(settings.downloadRandom);
       setThemeState(settings.theme);
       applyThemeClass(settings.theme);
+      setFontState(settings.font);
+      applyFontFamily(settings.font);
     });
   }, []);
 
@@ -240,6 +247,12 @@ export function OpenDirProvider({
     void saveSetting('theme', value);
   }, []);
 
+  const setFont = useCallback((value: FontFamily) => {
+    setFontState(value);
+    applyFontFamily(value);
+    void saveSetting('font', value);
+  }, []);
+
   const toggleSort = useCallback(
     (column: SortColumn) => {
       const next = getNextSortState(sortColumn, sortDir, column);
@@ -351,6 +364,8 @@ export function OpenDirProvider({
     setDownloadRandom,
     theme,
     setTheme,
+    font,
+    setFont,
     filteredSortedItems,
     visibleItems,
     visibleCount,

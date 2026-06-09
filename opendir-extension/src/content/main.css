@@ -23,6 +23,9 @@
   --popover: 0 0% 100%;
   --popover-foreground: 224 71% 4%;
   --radius: 0.625rem;
+  --opendir-font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 }
 
 .dark {
@@ -56,15 +59,7 @@ body,
 
 body {
   @apply bg-background text-foreground text-sm;
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    'Liberation Mono',
-    'Courier New',
-    monospace;
+  font-family: var(--opendir-font-family);
 }
 
 input[type='checkbox'] {
