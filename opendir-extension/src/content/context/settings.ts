@@ -4,7 +4,6 @@ import {
   type DirectoryItem,
   type OpenDirSettings,
   PAGE_SIZE,
-  PREVIEWABLE_FILE_TYPES,
   type SortColumn,
   type SortDir,
   type FontFamily,
@@ -13,6 +12,7 @@ import {
   type ViewMode,
 } from '../types';
 import { isFontFamily } from '../lib/fonts';
+import { isPreviewableItem } from '../lib/preview';
 import { parseDate } from '../parser/format';
 
 const STORAGE_KEYS = {
@@ -116,9 +116,7 @@ export function getFilteredSortedItems(
 }
 
 export function getPreviewableItems(items: DirectoryItem[]): DirectoryItem[] {
-  return items.filter(
-    (item) => !item.isParent && item.type === 'file' && item.fileType && PREVIEWABLE_FILE_TYPES.has(item.fileType),
-  );
+  return items.filter((item) => isPreviewableItem(item));
 }
 
 export function getDefaultSortDir(column: SortColumn): SortDir {

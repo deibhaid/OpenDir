@@ -6,7 +6,8 @@ import { getPreviewableItems } from '../context/settings';
 import { triggerDownload, FileTypeIcon } from '../lib/files';
 import { formatSize } from '../parser/format';
 import { Button } from './ui/Button';
-import { PREVIEWABLE_FILE_TYPES } from '../types';
+import { isPreviewableItem, isTextPreviewItem } from '../lib/preview';
+import { TextPreview } from './TextPreview';
 
 export function PreviewModal() {
   const { selectedItem, setSelectedItem, filteredSortedItems } = useOpenDir();
@@ -16,10 +17,7 @@ export function PreviewModal() {
     [filteredSortedItems],
   );
 
-  const isPreviewable =
-    !!selectedItem &&
-    !!selectedItem.fileType &&
-    PREVIEWABLE_FILE_TYPES.has(selectedItem.fileType);
+  const isPreviewable = !!selectedItem && isPreviewableItem(selectedItem);
 
   const currentIndex =
     selectedItem && isPreviewable
@@ -142,6 +140,7 @@ export function PreviewModal() {
                     <audio src={selectedItem.href} controls autoPlay className="w-full" />
                   </div>
                 )}
+                {isTextPreviewItem(selectedItem) && <TextPreview item={selectedItem} />}
               </div>
             </>
           )}

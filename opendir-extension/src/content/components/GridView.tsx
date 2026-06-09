@@ -5,6 +5,7 @@ import { getDisplayName } from '../lib/display';
 import { getCategoryStyle } from '../lib/category';
 import { ItemThumbnail } from './ItemThumbnail';
 import { triggerDownload } from '../lib/files';
+import { isPreviewableItem } from '../lib/preview';
 import type { DirectoryItem } from '../types';
 import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
@@ -12,8 +13,7 @@ import { Button } from './ui/Button';
 function GridCard({ item }: { item: DirectoryItem }) {
   const { thumbnails, setSelectedItem } = useOpenDir();
   const style = getCategoryStyle(item);
-  const isPreviewable =
-    item.fileType === 'image' || item.fileType === 'video' || item.fileType === 'audio';
+  const isPreviewable = isPreviewableItem(item);
 
   const handleMediaClick = () => {
     if (item.type === 'directory') {

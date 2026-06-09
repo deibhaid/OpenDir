@@ -79,7 +79,7 @@ export const AUDIO_EXTENSIONS = new Set([
   'aac', 'ac3', 'amr', 'ape', 'flac', 'm4a', 'm4b', 'm4p', 'mp3', 'ogg', 'opus', 'spx', 'wav',
 ]);
 
-export const DOCUMENT_EXTENSIONS = new Set(['pdf', 'doc', 'docx', 'txt', 'md']);
+export const DOCUMENT_EXTENSIONS = new Set(['pdf', 'doc', 'docx', 'txt', 'md', 'nfo']);
 
 export const CODE_EXTENSIONS = new Set([
   'js', 'ts', 'jsx', 'tsx', 'py', 'java', 'cpp', 'c', 'go', 'rs', 'rb', 'php',

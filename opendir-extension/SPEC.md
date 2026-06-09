@@ -1,7 +1,7 @@
 # OpenDir — Product Specification
 
 **Author:** David W. Bryson  
-**Version:** 0.1.2  
+**Version:** 0.1.3  
 **Type:** Chrome Manifest V3 Extension
 
 OpenDir replaces bare Apache/nginx directory index pages and enhances local `file://` directory browsing with search, filters, previews, and batch downloads.
@@ -157,7 +157,7 @@ Capture data **before** DOM is cleared.
 
 ## 10. Preview Modal
 
-- Large dialog: image preview, video with controls autoplay, audio with controls, or generic file icon.
+- Large dialog: image preview, video with controls autoplay, audio with controls, or text preview for plain-text files (`.txt`, `.md`, `.nfo`, code files, etc.).
 - Header: name, ext badge, size, `"index of total"` when multiple previewable siblings.
 - Download button, close button, prev/next when multiple items in current filtered set.
 
@@ -199,7 +199,7 @@ Capture data **before** DOM is cleared.
 
 ## 15. Manifest
 
-- name: OpenDir, author: David W. Bryson, version: 0.1.2
+- name: OpenDir, author: David W. Bryson, version: 0.1.3
 - permissions: `activeTab`, `scripting`, `storage`
 - host_permissions: `http://*/*`, `https://*/*`
 - background service worker module

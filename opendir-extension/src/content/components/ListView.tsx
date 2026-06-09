@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { ItemThumbnail } from './ItemThumbnail';
 import { useOpenDir } from '../context/OpenDirContext';
 import { getDisplayName } from '../lib/display';
+import { isPreviewableItem } from '../lib/preview';
 import { formatDate, formatSize } from '../parser/format';
 import type { SortColumn } from '../types';
 import { cn } from '../lib/utils';
@@ -98,7 +99,8 @@ export function ListViewHeader() {
 }
 
 function ListRow({ item }: { item: import('../types').DirectoryItem }) {
-  const { selectedHrefs, selectItem, thumbnails } = useOpenDir();
+  const { selectedHrefs, selectItem, setSelectedItem, thumbnails } = useOpenDir();
+  const opensPreview = isPreviewableItem(item);
   const selected = selectedHrefs.has(item.href);
   const displayName = getDisplayName(item);
   const shiftClickRef = useRef(false);
@@ -139,6 +141,11 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
             href={item.href}
             className="min-w-0 flex-1 break-words text-foreground hover:underline"
             title={displayName}
+            onClick={(event) => {
+              if (!opensPreview) return;
+              event.preventDefault();
+              setSelectedItem(item);
+            }}
           >
             {displayName}
           </a>
