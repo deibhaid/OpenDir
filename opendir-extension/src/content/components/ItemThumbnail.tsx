@@ -75,7 +75,12 @@ export function ItemThumbnail({
         />
         {showVideoPlayOverlay && (
           <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-            <Play className="h-4 w-4 text-white" />
+            <Play
+              className={cn(
+                'text-white',
+                textVariant === 'compact' ? 'h-2.5 w-2.5' : 'h-4 w-4',
+              )}
+            />
           </span>
         )}
       </div>
