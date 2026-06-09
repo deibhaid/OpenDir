@@ -56,9 +56,8 @@ export function VideoPreview({ item, onReadyToPlay }: VideoPreviewProps) {
         onLoadedData={playWithSound}
       />
       {codecHint && (
-        <p className="max-w-lg text-center text-xs text-muted-foreground">
-          Video is playing but this browser may not support the file&apos;s audio codec (common with
-          MKV/AC3/DTS). Download the file to play with a desktop player.
+        <p className="w-full truncate text-center text-xs text-muted-foreground">
+          No audio in browser — download for full playback.
         </p>
       )}
     </div>
