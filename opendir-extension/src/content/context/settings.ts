@@ -136,6 +136,10 @@ export function getNextSortState(
   return { sortColumn: clickedColumn, sortDir: currentDir === 'asc' ? 'desc' : 'asc' };
 }
 
+export function countListingItems(items: DirectoryItem[]): number {
+  return items.filter((item) => !item.isParent).length;
+}
+
 export function getFooterText(totalFiltered: number, hasActiveFilter: boolean): string {
   const noun = totalFiltered === 1 ? 'item' : 'items';
   if (hasActiveFilter) return `Showing ${totalFiltered} ${noun}`;

@@ -25,6 +25,7 @@ import {
 import {
   getDirectoryExtensions,
   getFilteredSortedItems,
+  countListingItems,
   getFooterText,
   getNextSortState,
   loadSettings,
@@ -201,7 +202,7 @@ export function OpenDirProvider({
     extensionFilter !== ALL_EXTENSIONS_FILTER ||
     (recursiveSearch && search.trim().length > 0);
   const footerText = useMemo(() => {
-    const base = getFooterText(filteredSortedItems.length, hasActiveFilter);
+    const base = getFooterText(countListingItems(filteredSortedItems), hasActiveFilter);
     if (recursiveSearchLoading) {
       return `${base} — searching subfolders…`;
     }
@@ -209,7 +210,7 @@ export function OpenDirProvider({
       return `${base} (recursive)`;
     }
     return base;
-  }, [filteredSortedItems.length, hasActiveFilter, recursiveSearchLoading, recursiveSearch, search]);
+  }, [filteredSortedItems, hasActiveFilter, recursiveSearchLoading, recursiveSearch, search]);
 
   const selectableVisibleItems = useMemo(
     () => visibleItems.filter((item) => !item.isParent),
