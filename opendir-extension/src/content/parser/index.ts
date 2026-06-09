@@ -118,9 +118,11 @@ export function extractTableMetadata(table: HTMLTableElement): Map<string, Pick<
 
   const columnMap: TableColumnMap = {};
   headers.forEach((header, index) => {
-    if (header.includes('name') || header.includes('file')) columnMap.name = index;
-    else if (header.includes('size')) columnMap.size = index;
-    else if (header.includes('modified') || header.includes('last')) columnMap.modified = index;
+    if (header.includes('size')) columnMap.size = index;
+    else if (header.includes('name') || header.includes('file')) columnMap.name = index;
+    else if (header.includes('modified') || header.includes('last') || header.includes('date')) {
+      columnMap.modified = index;
+    }
     else if (header.includes('description')) columnMap.description = index;
   });
 

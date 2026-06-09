@@ -3,7 +3,7 @@ import { useOpenDir } from '../context/OpenDirContext';
 import { formatDate, formatSize } from '../parser/format';
 import { getDisplayName } from '../lib/display';
 import { getCategoryStyle } from '../lib/category';
-import { FileTypeIcon } from './FileTypeIcon';
+import { ItemThumbnail } from './ItemThumbnail';
 import { triggerDownload } from '../lib/files';
 import type { DirectoryItem } from '../types';
 import { cn } from '../lib/utils';
@@ -49,33 +49,15 @@ function GridCard({ item }: { item: DirectoryItem }) {
           {style.label}
         </span>
 
-        {item.fileType === 'image' && thumbnails.images ? (
-          <img
-            src={item.href}
-            alt={item.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+        <div className="flex h-full w-full items-center justify-center overflow-hidden">
+          <ItemThumbnail
+            item={item}
+            thumbnails={thumbnails}
+            className="h-full w-full transition-transform group-hover:scale-105"
+            iconClassName={cn('h-12 w-12 transition-transform group-hover:scale-110', style.text)}
+            showVideoPlayOverlay
           />
-        ) : item.fileType === 'video' && thumbnails.videos ? (
-          <div className="relative h-full w-full overflow-hidden">
-            <video src={item.href} preload="metadata" muted className="h-full w-full object-cover" />
-            <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <Play className="h-10 w-10 text-white" />
-            </span>
-          </div>
-        ) : item.fileType === 'video' ? (
-          <div className="flex h-full items-center justify-center">
-            <FileTypeIcon item={item} className="h-12 w-12 transition-transform group-hover:scale-110" />
-            <Play className="absolute h-10 w-10 text-purple-600/80" />
-          </div>
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <FileTypeIcon
-              item={item}
-              className={cn('h-12 w-12 transition-transform group-hover:scale-110', style.text)}
-            />
-          </div>
-        )}
+        </div>
       </button>
 
       <div className="flex flex-1 flex-col gap-2 border-t p-4">

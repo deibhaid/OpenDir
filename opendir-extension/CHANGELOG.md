@@ -2,6 +2,20 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.8] — 2026-06-07
+
+### Fixed
+
+- Image and video thumbnails now appear in list view (previously only grid view)
+- Table listings with "File Size" columns parse size correctly (header no longer mistaken for name column)
+- GiB/MiB/KiB size units parse correctly in directory tables
+
+### Verified
+
+- Build, typecheck, and 44 unit tests passing
+
+[0.0.8]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.8
+
 ## [0.0.7] — 2026-06-09
 
 ### Changed

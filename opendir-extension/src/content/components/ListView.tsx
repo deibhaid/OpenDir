@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { FileTypeIcon } from './FileTypeIcon';
+import { ItemThumbnail } from './ItemThumbnail';
 import { useOpenDir } from '../context/OpenDirContext';
 import { getDisplayName } from '../lib/display';
 import { formatDate, formatSize } from '../parser/format';
@@ -98,7 +98,7 @@ export function ListViewHeader() {
 }
 
 function ListRow({ item }: { item: import('../types').DirectoryItem }) {
-  const { selectedHrefs, selectItem } = useOpenDir();
+  const { selectedHrefs, selectItem, thumbnails } = useOpenDir();
   const selected = selectedHrefs.has(item.href);
   const displayName = getDisplayName(item);
   const shiftClickRef = useRef(false);
@@ -128,11 +128,13 @@ function ListRow({ item }: { item: import('../types').DirectoryItem }) {
       </td>
       <td className="px-4 py-3">
         <div className="flex min-w-0 items-start gap-2.5">
-          {item.isParent ? (
-            <span className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-          ) : (
-            <FileTypeIcon item={item} className="mt-0.5" />
-          )}
+          <ItemThumbnail
+            item={item}
+            thumbnails={thumbnails}
+            className="mt-0.5 h-10 w-10"
+            iconClassName="mt-0.5 h-5 w-5"
+            showVideoPlayOverlay
+          />
           <a
             href={item.href}
             className="min-w-0 flex-1 break-words text-foreground hover:underline"

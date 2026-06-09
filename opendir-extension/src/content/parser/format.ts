@@ -38,6 +38,24 @@ export function formatSize(raw: string | number | undefined): string {
   const trimmed = raw.trim();
   if (!trimmed || trimmed === '-') return '—';
 
+  const binaryMatch = trimmed.match(/^([\d.]+)\s*([KMGT]i?B?)$/i);
+  if (binaryMatch) {
+    const value = parseFloat(binaryMatch[1]);
+    const suffix = binaryMatch[2].toUpperCase().replace(/IB$/, 'I').replace(/B$/, '');
+    const multipliers: Record<string, number> = {
+      K: 1024,
+      KI: 1024,
+      M: 1024 ** 2,
+      MI: 1024 ** 2,
+      G: 1024 ** 3,
+      GI: 1024 ** 3,
+      T: 1024 ** 4,
+      TI: 1024 ** 4,
+    };
+    const bytes = value * (multipliers[suffix] ?? 1);
+    return formatBytes(bytes);
+  }
+
   const apacheMatch = trimmed.match(/^([\d.]+)\s*([KMG])?$/i);
   if (apacheMatch) {
     const value = parseFloat(apacheMatch[1]);
@@ -56,6 +74,23 @@ export function parseSizeToBytes(raw: string | number | undefined): number {
   if (typeof raw === 'number') return raw;
   if (!raw) return 0;
   const trimmed = raw.trim();
+  const binaryMatch = trimmed.match(/^([\d.]+)\s*([KMGT]i?B?)$/i);
+  if (binaryMatch) {
+    const value = parseFloat(binaryMatch[1]);
+    const suffix = binaryMatch[2].toUpperCase().replace(/IB$/, 'I').replace(/B$/, '');
+    const multipliers: Record<string, number> = {
+      K: 1024,
+      KI: 1024,
+      M: 1024 ** 2,
+      MI: 1024 ** 2,
+      G: 1024 ** 3,
+      GI: 1024 ** 3,
+      T: 1024 ** 4,
+      TI: 1024 ** 4,
+    };
+    return value * (multipliers[suffix] ?? 1);
+  }
+
   const apacheMatch = trimmed.match(/^([\d.]+)\s*([KMG])?$/i);
   if (apacheMatch) {
     const value = parseFloat(apacheMatch[1]);

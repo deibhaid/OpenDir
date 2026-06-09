@@ -90,6 +90,25 @@ describe('parser', () => {
     expect(items).toHaveLength(1);
   });
 
+  it('parses table listings with Date and GiB size columns', () => {
+    const html = `
+      <html><body><table>
+        <tr><th>File Name</th><th>File Size</th><th>Date</th></tr>
+        <tr><td><a href="../">Parent directory/</a></td><td>-</td><td>-</td></tr>
+        <tr><td><a href="fanart.jpg">fanart.jpg</a></td><td>2.0 MiB</td><td>2026-Feb-13 19:16</td></tr>
+        <tr><td><a href="movie.mkv">movie.mkv</a></td><td>6.6 GiB</td><td>2026-Apr-19 11:02</td></tr>
+      </table></body></html>
+    `;
+    const items = parseLinks(parseHtml(html, 'https://example.com/movies/'));
+    const fanart = items.find((item) => item.name === 'fanart.jpg');
+    expect(fanart?.fileType).toBe('image');
+    expect(fanart?.modified).toBe('2026-Feb-13 19:16');
+    expect(fanart?.size).toBe(2 * 1024 ** 2);
+    const movie = items.find((item) => item.name === 'movie.mkv');
+    expect(movie?.fileType).toBe('video');
+    expect(movie?.size).toBeCloseTo(6.6 * 1024 ** 3, -6);
+  });
+
   it('uses full href basename when link text is truncated by the server', () => {
     const doc = parseHtml(`
       <html><body><pre>
@@ -109,7 +128,10 @@ describe('format helpers', () => {
     expect(classifyExtension('mp3')).toBe('audio');
     expect(formatSize(1536)).toBe('1.5 KB');
     expect(formatSize('12M')).toBe('12.0 MB');
+    expect(formatSize('6.6 GiB')).toBe('6.6 GB');
+    expect(parseSizeToBytes('2.0 MiB')).toBe(2 * 1024 ** 2);
     expect(formatDate('07-Jun-2026 10:15')).toMatch(/06\/07\/26 10:15:00/);
+    expect(formatDate('2026-Apr-19 11:02')).toMatch(/04\/19\/26 11:02:00/);
   });
 });
 

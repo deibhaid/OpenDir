@@ -1,4 +1,4 @@
-# OpenDir 0.0.7
+# OpenDir 0.0.8
 
 **Author:** David W. Bryson  
 **Type:** Chrome Manifest V3 extension (unpacked load)
@@ -7,7 +7,7 @@ OpenDir replaces bare Apache/nginx directory listings and enhances local `file:/
 
 ## Install
 
-1. Download **OpenDir-0.0.7.zip** from this release (or build from source).
+1. Download **OpenDir-0.0.8.zip** from this release (or build from source).
 2. Unzip and open `chrome://extensions`.
 3. Enable **Developer mode** → **Load unpacked** → select the `dist/` folder inside the unzipped package.
 4. For local folders, enable **Allow access to file URLs** on the OpenDir card.
@@ -32,6 +32,11 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 - Breadcrumb shows root URL with `/` path separators
 - Extension filter in the search bar — compact field with centered `*.*` / `*.ext` label
 - List + grid views, sortable columns, batch downloads, preview modal
+
+## What's in 0.0.8
+
+- **List view thumbnails** — image and video thumbnail settings now apply in list view (not only grid)
+- **Table size parsing** — fixes "File Size" columns and GiB/MiB/KiB units on directory servers like rainbowda.sh
 
 ## What's in 0.0.7
 
