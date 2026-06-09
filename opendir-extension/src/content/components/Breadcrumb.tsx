@@ -1,3 +1,5 @@
+import { safeDecodeURIComponent } from '../lib/url';
+
 function getRootHref(): string {
   const url = new URL(window.location.href);
   url.pathname = '/';
@@ -41,7 +43,7 @@ export function Breadcrumb() {
       </a>
       {segments.map((segment, index) => {
         const isLast = index === segments.length - 1;
-        const label = decodeURIComponent(segment);
+        const label = safeDecodeURIComponent(segment);
         return (
           <span key={`${segment}-${index}`} className="inline-flex min-w-0 items-center gap-1">
             <span className="shrink-0 text-muted-foreground/50">/</span>

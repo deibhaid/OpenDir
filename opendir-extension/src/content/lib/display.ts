@@ -1,4 +1,5 @@
 import type { DirectoryItem } from '../types';
+import { safeDecodeURIComponent } from './url';
 
 export function getCurrentDirectoryLabel(url: string = window.location.href): string {
   const parsed = new URL(url);
@@ -15,7 +16,7 @@ export function getCurrentDirectoryLabel(url: string = window.location.href): st
     return parsed.hostname;
   }
 
-  return decodeURIComponent(segments[segments.length - 1]);
+  return safeDecodeURIComponent(segments[segments.length - 1]);
 }
 
 export function getOpenDirTabTitle(url?: string): string {

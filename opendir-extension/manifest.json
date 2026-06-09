@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OpenDir",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Enhanced directory browsing for HTTP(S) listings and local file:// folders",
   "author": "David W. Bryson",
   "permissions": [

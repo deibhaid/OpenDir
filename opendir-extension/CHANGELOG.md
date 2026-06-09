@@ -2,6 +2,19 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.0.9] — 2026-06-07
+
+### Fixed
+
+- Directory listings no longer crash on links with malformed `%` encoding (e.g. FTP mirrors like ftp5.gwdg.de)
+- Suppress noisy errors when the extension is reloaded while a tab still has the old content script ("Extension context invalidated")
+
+### Verified
+
+- Build, typecheck, and 46 unit tests passing
+
+[0.0.9]: https://github.com/deibhaid/OpenDir/releases/tag/v0.0.9
+
 ## [0.0.8] — 2026-06-07
 
 ### Fixed

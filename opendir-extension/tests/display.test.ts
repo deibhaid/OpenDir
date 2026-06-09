@@ -11,6 +11,10 @@ describe('getCurrentDirectoryLabel', () => {
     expect(getCurrentDirectoryLabel('https://example.com/foo%20bar/')).toBe('foo bar');
   });
 
+  it('returns malformed percent-encoding unchanged', () => {
+    expect(getCurrentDirectoryLabel('https://example.com/bad%/')).toBe('bad%');
+  });
+
   it('uses the domain at the site root', () => {
     expect(getCurrentDirectoryLabel('https://example.com/')).toBe('example.com');
   });
