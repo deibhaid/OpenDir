@@ -1,4 +1,4 @@
-import { Download, Play } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useOpenDir } from '../context/OpenDirContext';
 import { formatDate, formatSize } from '../parser/format';
 import { getDisplayName } from '../lib/display';
@@ -40,15 +40,6 @@ function GridCard({ item }: { item: DirectoryItem }) {
         onClick={handleMediaClick}
         className={cn('relative h-32 cursor-pointer p-4', style.bg)}
       >
-        <span
-          className={cn(
-            'absolute left-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-medium',
-            style.badge,
-          )}
-        >
-          {style.label}
-        </span>
-
         <div className="flex h-full w-full items-center justify-center overflow-hidden">
           <ItemThumbnail
             item={item}
