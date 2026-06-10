@@ -1,20 +1,27 @@
+import { isIgnorableScriptingError, isInjectableUrl } from '../shared/injection';
 import { isPageDisabled, setPageDisabled } from './pagePreferences';
 
-export function feIsHttp(url: string): boolean {
-  return url.startsWith('http://') || url.startsWith('https://');
-}
+export async function injectOpenDir(tabId: number, url: string): Promise<boolean> {
+  if (!isInjectableUrl(url)) return false;
 
-export async function injectOpenDir(tabId: number, url: string): Promise<void> {
-  await chrome.scripting.executeScript({
-    target: { tabId, allFrames: true },
-    files: ['loader.js'],
-  });
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['loader.js'],
+    });
 
-  await chrome.scripting.insertCSS({
-    target: { tabId },
-    files: ['content.css'],
-  });
+    await chrome.scripting.insertCSS({
+      target: { tabId },
+      files: ['content.css'],
+    });
 
+    return true;
+  } catch (error) {
+    if (!isIgnorableScriptingError(error)) {
+      console.warn('[OpenDir] inject failed:', error);
+    }
+    return false;
+  }
 }
 
 /**
@@ -114,24 +121,33 @@ function detectOpenDirectoryOnPage(): boolean {
   return false;
 }
 
+async function runInMainFrame<T>(tabId: number, func: () => T): Promise<T | undefined> {
+  try {
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func,
+    });
+    return result as T;
+  } catch (error) {
+    if (!isIgnorableScriptingError(error)) {
+      console.warn('[OpenDir] scripting failed:', error);
+    }
+    return undefined;
+  }
+}
+
 export async function pageLooksLikeOpenDirectory(tabId: number): Promise<boolean> {
-  const [{ result }] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: detectOpenDirectoryOnPage,
-  });
-  return Boolean(result);
+  return Boolean(await runInMainFrame(tabId, detectOpenDirectoryOnPage));
 }
 
 export async function isOpenDirActive(tabId: number): Promise<boolean> {
-  const [{ result }] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: () => document.documentElement.dataset.openDirActive === '1',
-  });
-  return Boolean(result);
+  return Boolean(
+    await runInMainFrame(tabId, () => document.documentElement.dataset.openDirActive === '1'),
+  );
 }
 
 export async function feMaybeAutoInject(tabId: number, url: string): Promise<void> {
-  if (!feIsHttp(url)) return;
+  if (!isInjectableUrl(url)) return;
   if (await isPageDisabled(url)) return;
   if (await isOpenDirActive(tabId)) return;
 
@@ -141,6 +157,10 @@ export async function feMaybeAutoInject(tabId: number, url: string): Promise<voi
   }
 }
 
+export function feIsHttp(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
 async function hasFileAccess(): Promise<boolean> {
   return chrome.extension.isAllowedFileSchemeAccess();
 }
@@ -148,8 +168,13 @@ async function hasFileAccess(): Promise<boolean> {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status !== 'complete') return;
   const url = tab.url ?? changeInfo.url;
-  if (!url || !feIsHttp(url)) return;
-  void feMaybeAutoInject(tabId, url);
+  if (!isInjectableUrl(url)) return;
+
+  void feMaybeAutoInject(tabId, url).catch((error) => {
+    if (!isIgnorableScriptingError(error)) {
+      console.warn('[OpenDir] auto-inject failed:', error);
+    }
+  });
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
@@ -159,26 +184,32 @@ chrome.action.onClicked.addListener(async (tab) => {
     return;
   }
 
-  if (tab.url.startsWith('file://')) {
-    const allowed = await hasFileAccess();
-    if (!allowed) {
-      await chrome.tabs.create({ url: chrome.runtime.getURL('file-access-help.html') });
+  try {
+    if (tab.url.startsWith('file://')) {
+      const allowed = await hasFileAccess();
+      if (!allowed) {
+        await chrome.tabs.create({ url: chrome.runtime.getURL('file-access-help.html') });
+        return;
+      }
+    }
+
+    if (await isOpenDirActive(tab.id)) {
+      await setPageDisabled(tab.url, true);
+      await chrome.tabs.reload(tab.id);
       return;
     }
+
+    await setPageDisabled(tab.url, false);
+
+    const isOpenDirectory = await pageLooksLikeOpenDirectory(tab.id);
+    if (!isOpenDirectory) return;
+
+    await injectOpenDir(tab.id, tab.url);
+  } catch (error) {
+    if (!isIgnorableScriptingError(error)) {
+      console.warn('[OpenDir] toolbar action failed:', error);
+    }
   }
-
-  if (await isOpenDirActive(tab.id)) {
-    await setPageDisabled(tab.url, true);
-    await chrome.tabs.reload(tab.id);
-    return;
-  }
-
-  await setPageDisabled(tab.url, false);
-
-  const isOpenDirectory = await pageLooksLikeOpenDirectory(tab.id);
-  if (!isOpenDirectory) return;
-
-  await injectOpenDir(tab.id, tab.url);
 });
 
 console.log('[OpenDir] service worker ready');

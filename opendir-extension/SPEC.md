@@ -1,7 +1,7 @@
 # OpenDir — Product Specification
 
 **Author:** David W. Bryson  
-**Version:** 0.2.6  
+**Version:** 0.2.7  
 **Type:** Chrome Manifest V3 Extension
 
 OpenDir replaces bare Apache/nginx directory index pages and enhances local `file://` directory browsing with search, filters, previews, and batch downloads.
@@ -37,7 +37,7 @@ A page is treated as a directory index when **any** of:
 
 ## 2. Injection Mechanics
 
-- Service worker injects a small loader script + CSS into the page (`allFrames: true` for script if needed; CSS on tab).
+- Service worker injects a small loader script + CSS into the page (main frame only; CSS on tab).
 - Loader dynamically imports the main UI bundle from `chrome.runtime.getURL`.
 - Main entry: set `openDirActive=1`, clear `document.body.innerHTML` and `document.head.innerHTML`, append `div#root`, mount React app full viewport height.
 
@@ -199,7 +199,7 @@ Capture data **before** DOM is cleared.
 
 ## 15. Manifest
 
-- name: OpenDir, author: David W. Bryson, version: 0.2.6
+- name: OpenDir, author: David W. Bryson, version: 0.2.7
 - permissions: `activeTab`, `scripting`, `storage`
 - host_permissions: `http://*/*`, `https://*/*`
 - background service worker module
