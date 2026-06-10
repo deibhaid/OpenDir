@@ -33,6 +33,11 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 - Extension filter in the search bar — compact field with centered `*.*` / `*.ext` label
 - List + grid views, sortable columns, batch downloads, preview modal
 
+## What's in 0.2.7
+
+- **Injection fix** — no uncaught errors on browser error pages; main-frame injection only
+- All features from 0.2.6 (browse settings, keyboard shortcuts, copy URLs, folder covers)
+
 ## What's in 0.2.6
 
 - **Browse settings** — pin parent (`../`), recursive files-only, recursive sort by path, remember per-folder search/filter
@@ -46,7 +51,7 @@ Load the `dist/` folder inside the unzipped package as unpacked.
 
 1. Work on a feature branch; run `npm test` and `npm run build`.
 2. Bump once per release: `npm run version:bump` (increments patch only, e.g. `0.2.5` → `0.2.6`).
-3. Merge to `main`, tag `v0.2.6`, and attach a `dist/` zip to GitHub Releases.
+3. Merge to `main`, tag `v0.2.7`, and attach a `dist/` zip to GitHub Releases.
 
 ## What's in 0.0.8
 

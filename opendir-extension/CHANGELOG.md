@@ -2,6 +2,38 @@
 
 All notable changes to OpenDir are documented here.
 
+## [0.2.7] — 2026-06-09
+
+Stable release merged to `main`.
+
+### Added
+
+- Browse settings: pin parent (`../`), recursive files-only, recursive sort by path, remember per-folder search/filter
+- Keyboard shortcuts: `/` focuses search; ↑/↓ moves row focus; Enter opens or previews
+- Copy URLs for selected files from the selection bar
+- Movie-library folder covers: `fanart.jpg`, `poster.jpg`, `backdrop.jpg`, `folder.jpg` (list + grid)
+- Text preview for documents, code, and `.nfo` files; inline text snippet thumbnails
+- Master Thumbnails toggle with Images / Videos / Documents sub-options
+- Recursive subfolder search with infinity toggle
+- Toolbar icon to enable/disable OpenDir per page
+- Image previews when filtering by image extension (e.g. `*.jpg`)
+
+### Fixed
+
+- URL-encoded paths decode correctly in recursive search results
+- Thumbnail sub-options preserved when master Thumbnails is toggled off
+- Service worker no longer throws on browser error pages (`chrome-error://`)
+- Injection uses main frame only; ignorable scripting failures are caught
+- Footer count excludes parent directory (`../`)
+- Intermittent native listing after page refresh
+- GitHub/GitLab/Bitbucket repo pages no longer false-positive as directory listings
+
+### Verified
+
+- Build and 79 unit tests passing
+
+[0.2.7]: https://github.com/deibhaid/OpenDir/releases/tag/v0.2.7
+
 ## [0.0.8] — 2026-06-07
 
 ### Fixed
